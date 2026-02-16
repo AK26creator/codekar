@@ -6,10 +6,12 @@ const lenis = new Lenis({
   duration: isMobile ? 1.1 : 1.8,
   easing: (t) => 1 - Math.pow(1 - t, 3), // easeOutCubic
   smoothWheel: !isMobile,
-  smoothTouch: false,
   wheelMultiplier: 0.7,
   lerp: 0.08
 });
+
+// Expose lenis on window for other scripts to access safely
+(window as any).lenis = lenis;
 
 function raf(time: number) {
   lenis.raf(time);

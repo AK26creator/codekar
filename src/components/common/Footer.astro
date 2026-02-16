@@ -194,6 +194,10 @@ const year = new Date().getFullYear();
   }
 
   @media (max-width: 768px) {
+    footer {
+      padding: 2rem 0 0;
+    }
+
     .footer-content {
       grid-template-columns: 1fr;
       gap: 1.5rem;
@@ -203,6 +207,36 @@ const year = new Date().getFullYear();
       flex-direction: column;
       gap: 0.5rem;
       text-align: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    footer {
+      padding: 1.5rem 0 0;
+      margin-top: 2rem;
+    }
+
+    .footer-brand h3 {
+      font-size: 1.25rem;
+    }
+
+    .footer-brand p {
+      font-size: 0.8rem;
+    }
+
+    .social-icon {
+      width: 32px;
+      height: 32px;
+    }
+
+    .footer-links h4,
+    .footer-contact h4 {
+      font-size: 0.8rem;
+    }
+
+    .footer-links a,
+    .footer-contact li {
+      font-size: 0.8rem;
     }
   }
 </style>

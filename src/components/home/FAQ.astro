@@ -101,4 +101,44 @@ const faqs = [
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
   }
+
+  @media (max-width: 768px) {
+    .section {
+      padding: 4rem 0;
+    }
+
+    .accordion {
+      gap: 0.75rem;
+    }
+
+    summary {
+      padding: 1.125rem;
+      font-size: 0.9375rem;
+    }
+
+    .content {
+      padding: 0 1.125rem 1.125rem;
+      font-size: 0.9375rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .section {
+      padding: 3rem 0;
+    }
+
+    summary {
+      padding: 1rem;
+      font-size: 0.875rem;
+    }
+
+    .icon {
+      font-size: 1.25rem;
+    }
+
+    .content {
+      padding: 0 1rem 1rem;
+      font-size: 0.875rem;
+    }
+  }
 </style>

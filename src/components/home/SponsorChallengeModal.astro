@@ -65,8 +65,12 @@
 </div>
 
 <script>
-  import lenis from '../../scripts/smoothScroll';
-  
+  // Access lenis safely from the global scope instead of importing
+  // The smoothScroll module is loaded globally via Layout.astro
+  function getLenis() {
+    return (window as any).lenis || null;
+  }
+
   const modal = document.getElementById('challenge-modal');
   const closeBtn = document.getElementById('close-challenge-modal');
   const registerBtn = document.getElementById('register-btn');
@@ -75,6 +79,7 @@
     if (modal) {
       modal.dataset.open = 'false';
       document.body.style.overflow = '';
+      const lenis = getLenis();
       if (lenis) lenis.start();
     }
   }
@@ -92,20 +97,17 @@
   // Handle Register Button Click
   registerBtn?.addEventListener('click', () => {
     closeModal();
-    // Dispatch event or call global function to open main registration modal
-    // Assuming registration modal is available globally or on the layout
     const regModal = document.getElementById('registration-modal');
     if (regModal) {
        regModal.dataset.open = "true";
        regModal.setAttribute('aria-hidden', 'false');
        document.body.style.overflow = 'hidden';
     } else {
-        // Fallback: redirects to home with registration hash if not on home
         window.location.href = '/#register';
     }
   });
   
-  // Export open function
+  // Export open function globally
   (window as any).openChallengeModal = (data: any) => {
     if (!modal) return;
     
@@ -122,16 +124,17 @@
     if (prizeEl) prizeEl.textContent = `Prize: ${data.prize}`;
     if (descEl) descEl.textContent = data.description;
     
-    if (reqEl) {
+    if (reqEl && data.requirements) {
       reqEl.innerHTML = data.requirements.map((req: string) => `<li>${req}</li>`).join('');
     }
     
-    if (tagsEl) {
+    if (tagsEl && data.tags) {
       tagsEl.innerHTML = data.tags.map((tag: string) => `<span class="tech-tag">${tag}</span>`).join('');
     }
     
     modal.dataset.open = 'true';
     document.body.style.overflow = 'hidden';
+    const lenis = getLenis();
     if (lenis) lenis.stop();
   };
 </script>
@@ -331,5 +334,43 @@
     background: var(--color-s-primary-dark);
     transform: translateY(-2px);
     box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+  }
+
+  @media (max-width: 640px) {
+    .modal-content {
+      width: 100%;
+      max-height: 100vh;
+      border-radius: 0;
+      padding: 2rem 1.5rem;
+      margin: 0;
+    }
+
+    .modal-body h2 {
+      font-size: 1.5rem;
+    }
+
+    .prize-display {
+      font-size: 1.25rem;
+    }
+
+    .detail-card {
+      padding: 1rem;
+    }
+
+    .detail-card h3 {
+      font-size: 1rem;
+    }
+
+    .register-cta-btn {
+      padding: 0.875rem;
+      font-size: 1rem;
+    }
+
+    .close-btn {
+      top: 1rem;
+      right: 1rem;
+      width: 36px;
+      height: 36px;
+    }
   }
 </style>

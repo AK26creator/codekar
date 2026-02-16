@@ -69,7 +69,7 @@
 
   .mv-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2.5rem;
     max-width: 1200px;
     margin: 0 auto;
@@ -124,8 +124,41 @@
   }
 
   @media (max-width: 768px) {
+    .mission-vision-section {
+      padding: 4rem 0;
+    }
+
     .mv-grid {
       grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .mv-card {
+      padding: 2rem;
+    }
+
+    .mv-card h3 {
+      font-size: 1.5rem;
+    }
+
+    .mv-icon {
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .mission-vision-section {
+      padding: 3rem 0;
+    }
+
+    .mv-card {
+      padding: 1.5rem;
+      border-radius: 1rem;
+    }
+
+    .mv-card h3 {
+      font-size: 1.25rem;
     }
   }
 </style>

@@ -295,13 +295,50 @@ import TrackModal from './TrackModal.astro';
       padding: 4rem 0;
     }
     
+    .section-header {
+      margin-bottom: 2.5rem;
+    }
+
     .section-title {
       font-size: 2rem;
+    }
+
+    .section-subtitle {
+      font-size: 1rem;
     }
 
     .tracks-grid {
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1.5rem;
+    }
+
+    .card-inner {
+      padding: 1.5rem;
+    }
+
+    .photo-container {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .section {
+      padding: 3rem 0;
+    }
+
+    .tracks-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .track-title {
+      font-size: 1.1rem;
+    }
+
+    .track-desc {
+      font-size: 0.875rem;
     }
   }
 </style>

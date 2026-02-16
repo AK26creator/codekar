@@ -14,16 +14,16 @@ const sponsors = Array(4).fill({ name: "Sponsor Name", tier: "Gold" });
     </div>
     
     <!-- Highlighted Sponsor Challenges CTA -->
-    <div class="challenges-highlight">
-      <div class="highlight-content">
-        <div class="highlight-icon">🏆</div>
-        <h3>Sponsor Challenges</h3>
-        <p>Tackle real-world problems from industry leaders and win exclusive prizes!</p>
-        <a href="/challenges" class="highlight-btn">
-          View All Challenges
-          <span class="arrow">→</span>
-        </a>
+    <div class="highlight-content">
+      <div class="highlight-icon">
+        <img src="/Gemini_Generated_Image_27h89427h89427h8-removebg-preview.png" alt="Sponsor Challenge Icon" />
       </div>
+      <h3>Sponsor Challenges</h3>
+      <p>Tackle real-world problems from industry leaders and win exclusive prizes!</p>
+      <a href="/challenges" class="highlight-btn" data-lenis-prevent>
+        View All Challenges
+        <span class="arrow">→</span>
+      </a>
     </div>
   </div>
 </section>
@@ -70,74 +70,52 @@ const sponsors = Array(4).fill({ name: "Sponsor Name", tier: "Gold" });
     color: #64748b;
   }
 
-  /* Highlighted Sponsor Challenges Section */
-  .challenges-highlight {
-    margin-top: 3rem;
-    background: linear-gradient(135deg, var(--color-s-gradient-start) 0%, var(--color-s-primary-dark) 100%);
-    border-radius: 1.5rem;
-    padding: 0.25rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .challenge-card {
-    background: linear-gradient(135deg, var(--color-s-gradient-start) 0%, var(--color-s-primary-dark) 100%);
-    color: white;
-    padding: 2rem;
-    border-radius: 1rem;
-    text-align: center;
-    transition: transform 0.3s ease;
-  }
-
-  .challenges-highlight::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    animation: shimmer 3s infinite;
-  }
-
-  @keyframes shimmer {
-    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-  }
-
+  /* Highlight Content Styles (No Background Wrapper) */
   .highlight-content {
     background: white;
     border-radius: 1.25rem;
-    padding: 3rem;
+    padding: 2rem;
     text-align: center;
     position: relative;
+    max-width: 500px;
+    margin: 3rem auto 0; /* Added top margin */
+    border: 1px solid #e2e8f0; /* Added border for definition */
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05); /* Added shadow */
   }
 
   .highlight-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1rem;
     animation: bounce 2s infinite;
+  }
+
+  .highlight-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
   }
 
   @keyframes bounce {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-8px); }
   }
 
   .highlight-content h3 {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 800;
     background: linear-gradient(135deg, var(--color-s-primary), var(--color-s-accent));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
 
   .highlight-content p {
-    font-size: 1.125rem;
+    font-size: 1rem;
     color: #64748b;
-    margin-bottom: 2rem;
-    max-width: 600px;
+    margin-bottom: 1.5rem;
+    max-width: 400px;
     margin-left: auto;
     margin-right: auto;
   }
@@ -169,5 +147,73 @@ const sponsors = Array(4).fill({ name: "Sponsor Name", tier: "Gold" });
 
   .highlight-btn:hover .arrow {
     transform: translateX(5px);
+  }
+
+  @media (max-width: 768px) {
+    .section {
+      padding: 4rem 0;
+    }
+
+    .grid {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .sponsor-card {
+      padding: 1.5rem;
+    }
+
+    .highlight-content {
+      padding: 1.5rem;
+      max-width: 100%;
+      margin: 2rem auto 0;
+    }
+
+    .highlight-content h3 {
+      font-size: 1.25rem;
+    }
+
+    .highlight-content p {
+      font-size: 0.9375rem;
+    }
+
+    .highlight-btn {
+      padding: 0.875rem 1.5rem;
+      font-size: 1rem;
+    }
+
+    .highlight-icon {
+      width: 64px;
+      height: 64px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .section {
+      padding: 3rem 0;
+    }
+
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .sponsor-card {
+      padding: 1.25rem;
+    }
+
+    .placeholder-logo {
+      font-size: 1.5rem;
+    }
+
+    .highlight-content {
+      padding: 1.25rem;
+    }
+
+    .highlight-btn {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.9375rem;
+    }
   }
 </style>
