@@ -1,0 +1,335 @@
+---
+---
+
+<div id="challenge-modal" class="modal-overlay" data-open="false">
+  <div class="modal-content">
+    <button class="close-btn" id="close-challenge-modal">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    
+    <div class="modal-body">
+      <div class="modal-header-section">
+        <div class="sponsor-badge" id="modal-sponsor"></div>
+        <h2 id="modal-title"></h2>
+        <div class="prize-display" id="modal-prize"></div>
+      </div>
+      
+      <div class="modal-details">
+        <div class="detail-card">
+          <div class="card-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <h3>Challenge Description</h3>
+          </div>
+          <p id="modal-description"></p>
+        </div>
+        
+        <div class="detail-card">
+          <div class="card-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4"></polyline>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+            </svg>
+            <h3>Key Requirements</h3>
+          </div>
+          <ul id="modal-requirements"></ul>
+        </div>
+        
+        <div class="detail-card">
+          <div class="card-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+              <line x1="7" y1="7" x2="7.01" y2="7"></line>
+            </svg>
+            <h3>Tech Stack & Tags</h3>
+          </div>
+          <div class="tech-tags" id="modal-tags"></div>
+        </div>
+
+        <button id="register-btn" class="register-cta-btn">
+          Register for this Challenge
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import lenis from '../../scripts/smoothScroll';
+  
+  const modal = document.getElementById('challenge-modal');
+  const closeBtn = document.getElementById('close-challenge-modal');
+  const registerBtn = document.getElementById('register-btn');
+  
+  function closeModal() {
+    if (modal) {
+      modal.dataset.open = 'false';
+      document.body.style.overflow = '';
+      if (lenis) lenis.start();
+    }
+  }
+  
+  closeBtn?.addEventListener('click', closeModal);
+  
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+  
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.dataset.open === 'true') closeModal();
+  });
+
+  // Handle Register Button Click
+  registerBtn?.addEventListener('click', () => {
+    closeModal();
+    // Dispatch event or call global function to open main registration modal
+    // Assuming registration modal is available globally or on the layout
+    const regModal = document.getElementById('registration-modal');
+    if (regModal) {
+       regModal.dataset.open = "true";
+       regModal.setAttribute('aria-hidden', 'false');
+       document.body.style.overflow = 'hidden';
+    } else {
+        // Fallback: redirects to home with registration hash if not on home
+        window.location.href = '/#register';
+    }
+  });
+  
+  // Export open function
+  (window as any).openChallengeModal = (data: any) => {
+    if (!modal) return;
+    
+    // Populate data
+    const titleEl = document.getElementById('modal-title');
+    const sponsorEl = document.getElementById('modal-sponsor');
+    const prizeEl = document.getElementById('modal-prize');
+    const descEl = document.getElementById('modal-description');
+    const reqEl = document.getElementById('modal-requirements');
+    const tagsEl = document.getElementById('modal-tags');
+    
+    if (titleEl) titleEl.textContent = data.title;
+    if (sponsorEl) sponsorEl.textContent = data.sponsor;
+    if (prizeEl) prizeEl.textContent = `Prize: ${data.prize}`;
+    if (descEl) descEl.textContent = data.description;
+    
+    if (reqEl) {
+      reqEl.innerHTML = data.requirements.map((req: string) => `<li>${req}</li>`).join('');
+    }
+    
+    if (tagsEl) {
+      tagsEl.innerHTML = data.tags.map((tag: string) => `<span class="tech-tag">${tag}</span>`).join('');
+    }
+    
+    modal.dataset.open = 'true';
+    document.body.style.overflow = 'hidden';
+    if (lenis) lenis.stop();
+  };
+</script>
+
+<style>
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  
+  .modal-overlay[data-open="true"] {
+    opacity: 1;
+    pointer-events: all;
+  }
+  
+  .modal-content {
+    background: white;
+    border-radius: 24px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    padding: 3rem;
+    margin: 2rem auto;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  
+  .modal-overlay[data-open="true"] .modal-content {
+    transform: scale(1) translateY(0);
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: #f1f5f9;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .close-btn:hover {
+    background: #e2e8f0;
+    transform: rotate(90deg);
+  }
+  
+  .modal-header-section {
+    text-align: center;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #f1f5f9;
+    margin-bottom: 2rem;
+  }
+
+  .sponsor-badge {
+    display: inline-block;
+    background: #eff6ff;
+    color: var(--color-s-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 99px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+  
+  .prize-display {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #10b981;
+    margin-top: 0.5rem;
+  }
+
+  .modal-body h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--color-s-primary-dark);
+    line-height: 1.2;
+  }
+  
+  .modal-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .detail-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-header svg {
+    color: var(--color-s-primary);
+  }
+  
+  .detail-card h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-s-primary-dark);
+    margin: 0;
+  }
+
+  .detail-card p {
+    color: #475569;
+    line-height: 1.7;
+    margin: 0;
+  }
+  
+  .detail-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .detail-card li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    color: #475569;
+  }
+  
+  .detail-card li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--color-s-primary);
+    font-weight: bold;
+  }
+  
+  .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  .tech-tag {
+    background: white;
+    color: var(--color-s-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: 1px solid #e2e8f0;
+  }
+
+  .register-cta-btn {
+    width: 100%;
+    padding: 1rem;
+    background: var(--color-s-primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.125rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    transition: all 0.2s;
+    margin-top: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+  }
+
+  .register-cta-btn:hover {
+    background: var(--color-s-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+  }
+</style>
