@@ -1,0 +1,47 @@
+---
+import '../styles/global.css';
+import Header from '../components/common/Header.astro';
+import Footer from '../components/common/Footer.astro';
+import RegistrationModal from '../components/registration/RegistrationModal.astro';
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="CODEKAR Hackathon - Build. Innovate. Transform." />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		
+		<!-- Google Fonts: Outfit -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+		
+		<!-- Lenis Smooth Scrolling -->
+		<script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+	</head>
+	<body>
+		<Header />
+		
+		<main>
+			<slot />
+		</main>
+		<Footer />
+		
+		<!-- Global Modal -->
+		<RegistrationModal />
+		
+		<script type="module" src="/src/scripts/smoothScroll.ts"></script>
+		<script type="module" src="/src/scripts/maskReveal.ts"></script>
+	</body>
+</html>
+

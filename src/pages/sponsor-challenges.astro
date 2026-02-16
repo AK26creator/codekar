@@ -1,0 +1,136 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const challenges = Array(3).fill({
+  sponsor: "Sponsor Name",
+  title: "Optimizing AI Workflows",
+  description: "Create an agentic workflow that reduces manual intervention in data processing by 50%.",
+  prize: "$1000 Credits"
+});
+---
+
+<Layout title="Sponsor Challenges | CODEKAR">
+  <section class="page-header">
+    <div class="container">
+      <h1>Sponsor Challenges</h1>
+      <p>Solve real-world problems posted by our industry partners.</p>
+    </div>
+  </section>
+
+  <section class="challenges-section">
+    <div class="container">
+      <div class="grid">
+        {challenges.map(challenge => (
+          <div class="challenge-card">
+            <div class="card-header">
+              <span class="sponsor-tag">{challenge.sponsor}</span>
+              <span class="prize-tag">{challenge.prize}</span>
+            </div>
+            <h3>{challenge.title}</h3>
+            <p>{challenge.description}</p>
+            <button class="view-btn">View Details</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-header {
+    background: #0f172a;
+    color: white;
+    padding: 8rem 0 4rem;
+    text-align: center;
+    margin-top: 80px; /* Account for fixed header */
+  }
+
+  .page-header h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .page-header p {
+    color: #cbd5e1;
+    font-size: 1.2rem;
+  }
+
+  .challenges-section {
+    padding: 6rem 0;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .challenge-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+  }
+
+  .challenge-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    border-color: var(--color-s-primary);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .sponsor-tag {
+    background: #eff6ff;
+    color: var(--color-s-primary);
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .prize-tag {
+    color: #10b981;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-s-text);
+  }
+
+  p {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .view-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    color: #475569;
+    transition: all 0.2s;
+  }
+
+  .view-btn:hover {
+    border-color: var(--color-s-primary);
+    color: var(--color-s-primary);
+    background: #f8fafc;
+  }
+</style>

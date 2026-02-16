@@ -1,0 +1,193 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Payment Gateway - CODEKAR">
+  <div class="payment-gateway">
+    <div class="gateway-card">
+      <h1>Complete Your Payment</h1>
+      <div class="payment-details">
+        <div class="detail-row">
+          <span class="label">Order ID:</span>
+          <span class="value" id="order-id">Loading...</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Amount:</span>
+          <span class="value amount" id="amount">Loading...</span>
+        </div>
+      </div>
+
+      <div class="payment-methods">
+        <h3>Choose Payment Method</h3>
+        <button class="payment-method-btn" id="btn-success">
+          <span class="icon">✓</span>
+          <span>Simulate Successful Payment</span>
+        </button>
+        <button class="payment-method-btn cancel" id="btn-cancel">
+          <span class="icon">✕</span>
+          <span>Cancel Payment</span>
+        </button>
+      </div>
+
+      <p class="note">This is a mock payment gateway for testing. In production, this will be replaced with real Zoho Payments.</p>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // Get payment details from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const orderId = urlParams.get('order') || 'N/A';
+  const amount = urlParams.get('amount') || 'N/A';
+
+  // Display payment details
+  const orderIdEl = document.getElementById('order-id');
+  const amountEl = document.getElementById('amount');
+  
+  if (orderIdEl) orderIdEl.textContent = orderId;
+  if (amountEl) amountEl.textContent = `₹${amount}`;
+
+  // Simulate successful payment
+  document.getElementById('btn-success')?.addEventListener('click', () => {
+    window.location.href = `/payment/success?order=${orderId}&amount=${amount}`;
+  });
+
+  // Cancel payment
+  document.getElementById('btn-cancel')?.addEventListener('click', () => {
+    window.location.href = '/payment/cancel';
+  });
+</script>
+
+<style>
+  .payment-gateway {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #dbeafe 100%);
+  }
+
+  .gateway-card {
+    background: white;
+    padding: 3rem 2rem;
+    border-radius: 1rem;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    color: var(--color-s-primary-dark);
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .payment-details {
+    background: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+  }
+
+  .detail-row + .detail-row {
+    border-top: 1px solid #e2e8f0;
+    margin-top: 0.5rem;
+  }
+
+  .label {
+    font-weight: 600;
+    color: #475569;
+  }
+
+  .value {
+    color: var(--color-s-primary-dark);
+    font-weight: 600;
+  }
+
+  .value.amount {
+    color: var(--color-s-primary);
+    font-size: 1.25rem;
+  }
+
+  .payment-methods {
+    margin-bottom: 2rem;
+  }
+
+  .payment-methods h3 {
+    color: var(--color-s-primary-dark);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+
+  .payment-method-btn {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid var(--color-s-primary);
+    background: white;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .payment-method-btn .icon {
+    width: 40px;
+    height: 40px;
+    background: var(--color-s-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+  }
+
+  .payment-method-btn:hover {
+    background: var(--color-s-primary);
+    color: white;
+  }
+
+  .payment-method-btn:hover .icon {
+    background: white;
+    color: var(--color-s-primary);
+  }
+
+  .payment-method-btn.cancel {
+    border-color: #ef4444;
+  }
+
+  .payment-method-btn.cancel .icon {
+    background: #ef4444;
+  }
+
+  .payment-method-btn.cancel:hover {
+    background: #ef4444;
+  }
+
+  .payment-method-btn.cancel:hover .icon {
+    background: white;
+    color: #ef4444;
+  }
+
+  .note {
+    text-align: center;
+    color: #64748b;
+    font-size: 0.875rem;
+    padding: 1rem;
+    background: #fef3c7;
+    border-radius: 0.5rem;
+    border-left: 4px solid #f59e0b;
+  }
+</style>

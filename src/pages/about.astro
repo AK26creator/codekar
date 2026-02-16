@@ -1,0 +1,65 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="About Us | CODEKAR">
+  <section class="page-header">
+    <div class="container">
+      <h1>About Us</h1>
+    </div>
+  </section>
+
+  <section class="about-section">
+    <div class="container">
+        <div class="content-wrapper">
+          <p>
+            CodeKar is a student-focused hackathon platform organized by UNAI TECH, dedicated to fostering 
+            innovation through hands-on learning. UNAI TECH independently conducts hackathons and workshops 
+            while collaborating with esteemed corporate companies and educational institutions to provide students 
+            with industry exposure, mentorship, and growth opportunities. Our initiatives are designed to bridge 
+            the gap between academic learning and real-world technology applications.
+          </p>
+        </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-header {
+    background: #0f172a;
+    color: white;
+    padding: 8rem 0 4rem;
+    text-align: center;
+  }
+
+  .page-header h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .about-section {
+    padding: 6rem 0;
+    background: #f8fafc;
+  }
+
+  .content-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 3rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+  }
+
+  p {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: #475569;
+    text-align: justify;
+  }
+</style>

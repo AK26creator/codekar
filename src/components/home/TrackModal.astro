@@ -1,0 +1,306 @@
+---
+const { trackData } = Astro.props;
+---
+
+<div id="track-modal" class="modal-overlay" data-open="false">
+  <div class="modal-content">
+    <button class="close-btn" id="close-modal">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    
+    <div class="modal-body">
+      <div class="modal-header-section">
+        <div class="modal-icon" id="modal-icon-container">
+          <img id="modal-icon-img" src="" alt="" />
+        </div>
+        <h2 id="modal-title"></h2>
+        <p class="modal-subtitle" id="modal-description"></p>
+      </div>
+      
+      <div class="modal-details">
+        <div class="detail-card">
+          <div class="card-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 16v-4"></path>
+              <path d="M12 8h.01"></path>
+            </svg>
+            <h3>About This Track</h3>
+          </div>
+          <p id="modal-extended-desc"></p>
+        </div>
+        
+        <div class="detail-card">
+          <div class="card-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
+            <h3>What You Can Build</h3>
+          </div>
+          <ul id="modal-examples"></ul>
+        </div>
+        
+        <div class="detail-card">
+          <div class="card-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <h3>Technologies</h3>
+          </div>
+          <div class="tech-tags" id="modal-tech"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import lenis from '../../scripts/smoothScroll';
+  
+  const modal = document.getElementById('track-modal');
+  const closeBtn = document.getElementById('close-modal');
+  
+  function closeModal() {
+    if (modal) {
+      modal.dataset.open = 'false';
+      document.body.style.overflow = '';
+      // Resume Lenis smooth scroll
+      if (lenis) lenis.start();
+    }
+  }
+  
+  // Close modal
+  closeBtn?.addEventListener('click', closeModal);
+  
+  // Close on overlay click (not on modal content)
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+  
+  // ESC key to close
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.dataset.open === 'true') {
+      closeModal();
+    }
+  });
+  
+  // Export open function for use in Tracks.astro
+  (window as any).openTrackModal = () => {
+    if (modal) {
+      modal.dataset.open = 'true';
+      document.body.style.overflow = 'hidden';
+      // Stop Lenis smooth scroll when modal is open
+      if (lenis) lenis.stop();
+    }
+  };
+</script>
+
+<style>
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    /* Prevent scrolling on the overlay itself */
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .modal-overlay[data-open="true"] {
+    opacity: 1;
+    pointer-events: all;
+  }
+  
+  .modal-content {
+    background: white;
+    border-radius: 24px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    padding: 3rem;
+    margin: 2rem auto;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    /* Enable smooth scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+    /* Prevent scroll chaining */
+    overscroll-behavior: contain;
+    /* Prevent touch gestures on background */
+    touch-action: pan-y;
+  }
+  
+  .modal-overlay[data-open="true"] .modal-content {
+    transform: scale(1) translateY(0);
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: #f1f5f9;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .close-btn:hover {
+    background: #e2e8f0;
+    transform: rotate(90deg);
+  }
+  
+  
+  .modal-icon {
+    margin-bottom: 1rem;
+    display: inline-flex;
+    width: 100px;
+    height: 100px;
+    background: #f8fafc;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .modal-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .modal-header-section {
+    text-align: center;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #f1f5f9;
+    margin-bottom: 2rem;
+  }
+
+  .modal-subtitle {
+    font-size: 1.125rem;
+    color: #64748b;
+    line-height: 1.7;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .modal-body h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--color-s-primary);
+  }
+  
+  .modal-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .detail-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .detail-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    border-color: var(--color-s-primary);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-header svg {
+    color: var(--color-s-primary);
+    flex-shrink: 0;
+  }
+  
+  .detail-card h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-s-primary-dark);
+    margin: 0;
+  }
+
+  .detail-card p {
+    color: #475569;
+    line-height: 1.7;
+    margin: 0;
+  }
+  
+  
+  .detail-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .detail-card li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    color: #475569;
+  }
+  
+  .detail-card li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--color-s-primary);
+  }
+  
+  .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  .tech-tag {
+    background: white;
+    color: var(--color-s-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: 2px solid var(--color-s-light);
+    transition: all 0.2s;
+  }
+
+  .tech-tag:hover {
+    background: var(--color-s-primary);
+    color: white;
+    border-color: var(--color-s-primary);
+    transform: translateY(-2px);
+  }
+</style>

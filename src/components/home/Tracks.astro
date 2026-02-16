@@ -1,0 +1,208 @@
+---
+const tracks = [
+  {
+    title: "Education",
+    description: "Revolutionize learning with ed-tech tools, LMS innovations, and accessible knowledge platforms.",
+    icon: "/Gemini_Generated_Image_gzmwk6gzmwk6gzmw.png",
+    extendedDesc: "Transform the way people learn and teach. Build platforms that make education accessible, engaging, and effective for everyone.",
+    examples: ["AI-powered tutoring systems", "Interactive learning platforms", "Virtual classrooms", "Gamified education apps"],
+    technologies: ["React", "Python", "TensorFlow", "WebRTC"]
+  },
+  {
+    title: "Entertainment",
+    description: "Build immersive experiences, gaming solutions, or content streaming innovations.",
+    icon: "/Gemini_Generated_Image_mstg9gmstg9gmstg.png",
+    extendedDesc: "Create the next generation of entertainment. From gaming to streaming, build experiences that captivate and engage audiences worldwide.",
+    examples: ["Multiplayer gaming platforms", "Streaming services", "AR/VR experiences", "Content recommendation engines"],
+    technologies: ["Unity", "WebGL", "Node.js", "AWS Media Services"]
+  },
+  {
+    title: "AI Agents & Automations",
+    description: "Develop intelligent agents that automate workflows and solve complex tasks autonomously.",
+    icon: "/Gemini_Generated_Image_rgmtbergmtbergmt.png",
+    extendedDesc: "Build autonomous systems that can think, learn, and act. Create intelligent agents that transform how work gets done.",
+    examples: ["Chatbots & virtual assistants", "Workflow automation tools", "Smart email assistants", "Code generation agents"],
+    technologies: ["LangChain", "OpenAI API", "Python", "AutoGen"]
+  },
+  {
+    title: "Core AI & ML",
+    description: "Push boundaries with Deep Learning, NLP, Computer Vision, and predictive models.",
+    icon: "/Gemini_Generated_Image_t2c0vht2c0vht2c0.png",
+    extendedDesc: "Dive deep into machine learning and artificial intelligence. Build models that can see, understand, and predict.",
+    examples: ["Image recognition systems", "Natural language processors", "Predictive analytics", "Recommendation systems"],
+    technologies: ["PyTorch", "TensorFlow", "scikit-learn", "Hugging Face"]
+  },
+  {
+    title: "Big Data & Mass Communication",
+    description: "Harness data at scale for insights, journalism, or social connection platforms.",
+    icon: "/Gemini_Generated_Image_v8yrntv8yrntv8yr.png",
+    extendedDesc: "Process and analyze massive datasets to uncover insights. Build platforms that connect people and disseminate information at scale.",
+    examples: ["Data visualization dashboards", "Real-time analytics platforms", "Social media tools", "News aggregators"],
+    technologies: ["Apache Spark", "Kafka", "PostgreSQL", "D3.js"]
+  },
+  {
+    title: "Cutting-edge Agents",
+    description: "Experimental agentic workflows next-gen autonomous systems.",
+    icon: "/Gemini_Generated_Image_wg6h6swg6h6swg6h.png",
+    extendedDesc: "Pioneer the future of autonomous systems. Experiment with cutting-edge technologies and build the next generation of intelligent agents.",
+    examples: ["Multi-agent systems", "Autonomous research assistants", "Complex task planners", "Self-improving agents"],
+    technologies: ["CrewAI", "LangGraph", "Vector DBs", "Reinforcement Learning"]
+  }
+];
+
+import ScrollStack from './ScrollStack.astro';
+import TrackModal from './TrackModal.astro';
+---
+<section id="tracks" class="section">
+  <div class="container">
+    <h2 class="section-title">Tracks</h2>
+      <ScrollStack>
+        {tracks.map((track, index) => (
+          <div 
+            class="scroll-stack-card track-card clickable-card" 
+            data-track-index={index}
+            data-track-title={track.title}
+            data-track-desc={track.description}
+            data-track-extended={track.extendedDesc}
+            data-track-icon={track.icon}
+            data-track-examples={JSON.stringify(track.examples)}
+            data-track-tech={JSON.stringify(track.technologies)}
+          >
+            <div class="icon">
+              <img src={track.icon} alt={track.title} />
+            </div>
+            <h3>{track.title}</h3>
+            <p>{track.description}</p>
+            <span class="click-hint">Click to learn more →</span>
+          </div>
+        ))}
+      </ScrollStack>
+    </div>
+    
+    <!-- Track Details Modal -->
+    <TrackModal />
+</section>
+
+<script>
+  // Track Card Click Handlers
+  const trackCards = document.querySelectorAll('.clickable-card');
+  const modal = document.getElementById('track-modal');
+  
+  trackCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const title = card.dataset.trackTitle;
+      const desc = card.dataset.trackDesc;
+      const extended = card.dataset.trackExtended;
+      const icon = card.dataset.trackIcon;
+      const examples = JSON.parse(card.dataset.trackExamples || '[]');
+      const tech = JSON.parse(card.dataset.trackTech || '[]');
+      
+      // Populate modal
+      const modalTitle = document.getElementById('modal-title');
+      const modalDesc = document.getElementById('modal-description');
+      const modalExtended = document.getElementById('modal-extended-desc');
+      const modalIconImg = document.getElementById('modal-icon-img');
+      const modalExamples = document.getElementById('modal-examples');
+      const modalTech = document.getElementById('modal-tech');
+      
+      if (modalTitle) modalTitle.textContent = title || '';
+      if (modalDesc) modalDesc.textContent = desc || '';
+      if (modalExtended) modalExtended.textContent = extended || '';
+      if (modalIconImg) {
+        modalIconImg.src = icon || '';
+        modalIconImg.alt = title || '';
+      }
+      
+      // Examples
+      if (modalExamples) {
+        modalExamples.innerHTML = examples.map(ex => `<li>${ex}</li>`).join('');
+      }
+      
+      // Technologies
+      if (modalTech) {
+        modalTech.innerHTML = tech.map(t => `<span class="tech-tag">${t}</span>`).join('');
+      }
+      
+      // Open modal using centralized function
+      if ((window as any).openTrackModal) {
+        (window as any).openTrackModal();
+      }
+    });
+  });
+</script>
+
+<style>
+  /* Tracks Section Specific Styles */
+  .section {
+    padding: 3rem 0 6rem;
+  }
+  
+  .section-title {
+    margin-bottom: 2rem;
+  }
+  
+  /* 
+     The track-card class is now applied to the .scroll-stack-card div. 
+     The core card styling (white bg, padding, shadow) is handled by ScrollStack.astro's global styles.
+     Here we just add specific content styling if needed.
+  */
+
+  /* .track-card basic styling is now inherited/handled by .scroll-stack-card in ScrollStack.astro */
+  /* We keep specific content styles */
+  
+  .clickable-card {
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .click-hint {
+    display: block;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--color-s-primary);
+    font-weight: 600;
+    opacity: 0.7;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  .clickable-card:hover .click-hint {
+    opacity: 1;
+    transform: translateX(5px);
+  }
+
+  .track-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--color-s-primary);
+    box-shadow: 0 10px 40px -10px rgba(37, 99, 235, 0.1);
+  }
+
+  .icon {
+    margin-bottom: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: #f1f5f9;
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+
+  .icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--color-s-text);
+  }
+
+  p {
+    color: #64748b;
+    line-height: 1.6;
+  }
+</style>

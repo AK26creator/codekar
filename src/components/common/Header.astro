@@ -1,0 +1,166 @@
+---
+---
+<header id="main-header">
+  <div class="container header-content">
+    <div class="logo">
+      <a href="/">CODEKAR</a>
+    </div>
+    <nav id="nav-menu">
+      <ul>
+        <li><a href="/#home" class="nav-link">Home</a></li>
+        <li><a href="/#tracks" class="nav-link">Tracks</a></li>
+        <li><a href="/#prizes" class="nav-link">Prizes</a></li>
+        <li><a href="/#about" class="nav-link">About</a></li>
+        <li><a href="/#sponsors" class="nav-link">Sponsors</a></li>
+        <li><a href="/#faq" class="nav-link">FAQ</a></li>
+      </ul>
+    </nav>
+    <button id="apply-btn" class="cta-button">Apply Now</button>
+  </div>
+</header>
+
+<script>
+  // Sticky Header Logic
+  const header = document.getElementById('main-header');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      header?.classList.add('scrolled');
+    } else {
+      header?.classList.remove('scrolled');
+    }
+  });
+
+  // Open Registration Modal
+  const applyBtn = document.getElementById('apply-btn');
+  applyBtn?.addEventListener('click', () => {
+    const modal = document.getElementById('registration-modal');
+    if (modal) {
+      modal.dataset.open = "true";
+      document.body.style.overflow = 'hidden';
+    }
+  });
+
+  // Set active link based on current page/hash
+  const navLinks = document.querySelectorAll('.nav-link');
+  const setActiveLink = () => {
+    const currentPath = window.location.pathname;
+    const currentHash = window.location.hash;
+    
+    navLinks.forEach((link) => {
+      const href = (link as HTMLAnchorElement).getAttribute('href') || '';
+      if (
+        (currentPath === '/' && href === '/#home') ||
+        (href.includes(currentPath) && currentPath !== '/') ||
+        (currentHash && href.includes(currentHash))
+      ) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+  };
+
+  // Initial active state
+  setActiveLink();
+  
+  // Update on hash change
+  window.addEventListener('hashchange', setActiveLink);
+</script>
+
+<style>
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 1.5rem 0;
+    background: transparent;
+    transition: all 0.3s ease;
+  }
+  
+  header.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 1rem 0;
+  }
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo a {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    background: linear-gradient(135deg, var(--color-s-primary), var(--color-s-primary-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+  }
+
+  nav {
+    position: relative;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 0.5rem;
+    border-radius: 9999px;
+    z-index: 100;
+  }
+
+  nav ul {
+    display: flex;
+    gap: 0.25rem;
+    position: relative;
+  }
+
+  nav a {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-s-primary-dark);
+    transition: all 0.2s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    position: relative;
+    cursor: pointer;
+  }
+
+  nav a:hover {
+    color: #ffffff;
+    background: var(--color-s-primary);
+    cursor: pointer;
+  }
+  
+  nav a.active {
+    color: var(--color-s-primary);
+    cursor: pointer;
+  }
+
+  .cta-button {
+    background: var(--color-s-primary);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    transition: transform 0.2s, background-color 0.2s;
+    cursor: pointer;
+  }
+
+  .cta-button:hover {
+    transform: translateY(-2px);
+    background: var(--color-s-primary-dark);
+    box-shadow: 0 4px 12px rgba(30, 90, 157, 0.3);
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    nav {
+      display: none;
+    }
+  }
+</style>

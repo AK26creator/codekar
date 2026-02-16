@@ -1,0 +1,119 @@
+:root {
+  /* New Color Palette */
+  --color-s-primary-dark: #0A4174;
+  /* Dark Navy - Primary dark */
+  --color-s-primary: #49769F;
+  /* Muted Blue - Primary */
+  --color-s-accent: #4E8EA2;
+  /* Teal Blue - Accent */
+  --color-s-text: #0A4174;
+  /* Dark Navy - Text */
+  --color-s-bg: #ffffff;
+  /* White - Background */
+  --color-s-light: #BDD8E9;
+  /* Very Light Blue - Light accents */
+
+  /* Gradient Colors */
+  --color-s-gradient-start: #49769F;
+  /* Muted Blue */
+  --color-s-gradient-end: #7BBDE8;
+  /* Sky Blue */
+
+  /* Additional Palette Colors */
+  --color-s-teal: #4E8EA2;
+  /* Teal Blue */
+  --color-s-light-teal: #6EA2B3;
+  /* Light Teal */
+  --color-s-sky: #7BBDE8;
+  /* Sky Blue */
+
+  --font-body: 'Outfit', sans-serif;
+}
+
+html {
+  scroll-padding-top: 80px;
+  scroll-behavior: auto;
+  /* Let Lenis control scrolling */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--color-s-bg);
+  color: var(--color-s-text);
+  line-height: 1.6;
+  overscroll-behavior: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 3rem;
+  background: linear-gradient(to right, var(--color-s-primary), var(--color-s-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Mask Reveal Animation Utilities */
+.mask {
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+.mask-container {
+  overflow: visible;
+}
+
+.reveal-text {
+  display: inline-block;
+  transform: translateY(100%);
+  will-change: transform;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
