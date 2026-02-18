@@ -252,23 +252,50 @@ const team = [
     }
 
     .team-grid {
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(2, 1fr); /* Force 2 columns */
+      gap: 0.75rem; /* Tighter gap */
     }
 
     .card-inner {
-      padding: 1.5rem;
+      padding: 1rem; /* Reduced padding */
+      border-radius: 12px;
     }
 
     .photo-container {
-      width: 120px;
-      height: 120px;
+      width: 80px; /* Smaller photo */
+      height: 80px;
+      margin: 0 auto 0.75rem;
+    }
+    
+    .member-photo {
+       border-width: 2px;
+    }
+
+    .member-name {
+      font-size: 0.9rem; /* Smaller text */
+      margin-bottom: 0.25rem;
+    }
+
+    .member-role {
+      font-size: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .social-link {
+      width: 28px;
+      height: 28px;
+    }
+    
+    .social-link svg {
+      width: 14px;
+      height: 14px;
     }
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 360px) {
     .team-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, 1fr); /* Keep 2 columns even on small screens if possible, or 1 if too cramped. User asked for 2 columns/compact view implicitly by saying "reduce size". 2 columns on 320px might be tight but doable with 80px photos. */
+      gap: 0.5rem;
     }
   }
 </style>
