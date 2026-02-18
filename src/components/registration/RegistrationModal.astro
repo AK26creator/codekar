@@ -37,6 +37,20 @@
             <input type="text" id="team-name" placeholder="Code Warriors">
           </div>
 
+          <!-- Team Members Fields (Hidden for Individual) -->
+          <div class="field team-member-field" style="display:none;">
+             <label for="member-2">Team Member 2 Name</label>
+             <input type="text" id="member-2" placeholder="Member Name">
+          </div>
+          <div class="field team-member-field" style="display:none;">
+             <label for="member-3">Team Member 3 Name</label>
+             <input type="text" id="member-3" placeholder="Member Name">
+          </div>
+          <div class="field team-member-field" style="display:none;">
+             <label for="member-4">Team Member 4 Name</label>
+             <input type="text" id="member-4" placeholder="Member Name">
+          </div>
+
           <div class="field">
             <label for="email">Email ID</label>
             <input type="email" id="email" required placeholder="john@example.com">
@@ -214,10 +228,35 @@
           if(teamNameField) teamNameField.style.display = 'block';
           if(formTitle) formTitle.textContent = 'Team Registration';
           document.getElementById('team-name')?.setAttribute('required', 'true');
+          
+          // Show team member fields
+          document.querySelectorAll('.team-member-field').forEach(el => {
+            (el as HTMLElement).style.display = 'flex';
+          });
+          
+          // Update labels for Team Lead
+          const nameLabel = document.querySelector('label[for="full-name"]');
+          if(nameLabel) nameLabel.textContent = "Team Lead Name";
+          
+          const emailLabel = document.querySelector('label[for="email"]');
+          if(emailLabel) emailLabel.textContent = "Team Lead Email (Main ID)";
+
         } else {
           if(teamNameField) teamNameField.style.display = 'none';
           if(formTitle) formTitle.textContent = 'Individual Registration';
           document.getElementById('team-name')?.removeAttribute('required');
+          
+          // Hide team member fields
+          document.querySelectorAll('.team-member-field').forEach(el => {
+            (el as HTMLElement).style.display = 'none';
+          });
+
+          // Revert labels
+          const nameLabel = document.querySelector('label[for="full-name"]');
+          if(nameLabel) nameLabel.textContent = "Full Name";
+          
+          const emailLabel = document.querySelector('label[for="email"]');
+          if(emailLabel) emailLabel.textContent = "Email ID";
         }
 
         step1?.classList.remove('active');
