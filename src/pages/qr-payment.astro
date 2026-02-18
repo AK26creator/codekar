@@ -30,7 +30,7 @@ import Layout from '../layouts/Layout.astro';
         <div class="qr-section">
           <h3>Scan QR Code to Pay</h3>
           <div class="qr-container">
-            <img src="/demo-qr-code.svg" alt="UPI Payment QR Code" style="width: 220px; height: 220px; border: 3px solid #e2e8f0; border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);" />
+            <img src="/demo-qr-code.svg" alt="UPI Payment QR Code" class="qr-code-img" />
           </div>
           <p class="qr-instruction">Use any UPI app to scan and pay</p>
           <div class="upi-apps">
@@ -251,6 +251,17 @@ import Layout from '../layouts/Layout.astro';
     margin-bottom: 1rem;
   }
 
+  .qr-code-img {
+    width: 220px;
+    height: 220px;
+    border: 3px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  /* Unused placeholder class removed or kept if needed elsewhere (it seems unused based on my read) */
   .qr-placeholder {
     width: 220px;
     height: 220px;

@@ -124,7 +124,7 @@
     top: 0;
     width: 100%;
     z-index: 1000;
-    padding: 1.5rem 0;
+    padding: 1rem 0;
     background: transparent;
     transition: all 0.3s ease;
   }
@@ -134,34 +134,36 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    padding: 1rem 0;
+    padding: 0.75rem 0;
   }
 
   .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 0.5rem;
   }
 
   .logo a {
-    font-size: 1.5rem;
+    font-size: clamp(1.2rem, 4vw, 1.5rem);
     font-weight: 800;
     letter-spacing: -0.05em;
     background: linear-gradient(135deg, var(--color-s-primary), var(--color-s-primary-dark));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     cursor: pointer;
+    white-space: nowrap;
   }
 
-  /* ===== Hamburger Button ===== */
+  /* ===== Hamburger Button (Mobile Default) ===== */
   .hamburger {
-    display: none;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 6px;
     width: 44px;
-    height: 44px;
+    height: 44px; /* Min touch target */
     background: rgba(0, 0, 0, 0.04);
     border: 1px solid rgba(0, 0, 0, 0.08);
     cursor: pointer;
@@ -169,7 +171,7 @@
     z-index: 1001;
     border-radius: 10px;
     transition: background 0.2s;
-    order: 3;
+    order: 3; /* Hamburger always on right in mobile flex */
   }
 
   .hamburger:hover {
@@ -201,7 +203,7 @@
 
   /* ===== Nav Backdrop ===== */
   .nav-backdrop {
-    display: none;
+    display: none; /* JS toggles this */
     position: fixed;
     top: 0;
     left: 0;
@@ -215,58 +217,79 @@
   }
 
   .nav-backdrop.active {
+    display: block;
     opacity: 1;
     pointer-events: all;
   }
 
-  /* ===== Desktop Nav ===== */
+  /* ===== Mobile Nav (Default) ===== */
   nav {
-    position: relative;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding: 0.5rem;
-    border-radius: 9999px;
-    z-index: 100;
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: min(300px, 85vw);
+    height: 100vh;
+    height: 100dvh;
+    background: white;
+    padding: 6rem 1.5rem 2rem;
+    z-index: 999;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  nav.open {
+    right: 0;
   }
 
   nav ul {
     display: flex;
-    gap: 0.25rem;
-    position: relative;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
   }
 
   nav a {
-    font-weight: 600;
-    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    font-size: 1.1rem;
+    font-weight: 500;
     color: var(--color-s-primary-dark);
+    border-radius: 0.75rem;
+    min-height: 44px; /* Touch target */
     transition: all 0.2s ease;
-    padding: 0.5rem 1rem;
-    border-radius: 9999px;
-    position: relative;
-    cursor: pointer;
-    white-space: nowrap;
   }
 
   nav a:hover {
-    color: #ffffff;
-    background: var(--color-s-primary);
+    background: rgba(73, 118, 159, 0.1);
+    color: var(--color-s-primary);
   }
   
   nav a.active {
     color: var(--color-s-primary);
+    background: rgba(73, 118, 159, 0.05);
   }
 
+  /* Apply Button Mobile */
   .cta-button {
     background: var(--color-s-primary);
     color: white;
     border: none;
-    padding: 0.6rem 1.25rem;
+    padding: 0.5rem 1rem;
     border-radius: 9999px;
     font-weight: 600;
+    font-size: 0.9rem;
     transition: transform 0.2s, background-color 0.2s;
     cursor: pointer;
     white-space: nowrap;
+    min-height: 44px; /* Touch target */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    order: 2; /* Between logo and hamburger on mobile */
   }
 
   .cta-button:hover {
@@ -275,73 +298,79 @@
     box-shadow: 0 4px 12px rgba(30, 90, 157, 0.3);
   }
 
-  /* ===== Responsive: Tablet & Below ===== */
-  @media (max-width: 768px) {
-    .header-content {
-      flex-wrap: nowrap;
+  /* ===== Desktop Styles (min-width: 769px) ===== */
+  @media (min-width: 769px) {
+    header {
+      padding: 1.5rem 0;
+    }
+
+    header.scrolled {
+      padding: 1rem 0;
     }
 
     .hamburger {
-      display: flex !important;
+      display: none;
     }
 
     .nav-backdrop {
-      display: block;
+      display: none !important;
     }
 
     nav {
-      position: fixed;
-      top: 0;
-      right: -100%;
-      width: min(300px, 80vw);
-      height: 100vh;
-      background: white;
-      border-radius: 0;
-      padding: 5rem 2rem 2rem;
-      z-index: 999;
-      box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
-      transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow-y: auto;
-    }
-
-    nav.open {
-      right: 0;
+      position: relative;
+      top: auto;
+      right: auto;
+      width: auto;
+      height: auto;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 0.5rem;
+      border-radius: 9999px;
+      box-shadow: none;
+      overflow-y: visible;
+      flex-direction: row;
+      order: 2; /* Nav in middle on desktop */
     }
 
     nav ul {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    nav a {
-      display: block;
-      padding: 0.875rem 1rem;
-      font-size: 1.05rem;
-      border-radius: 0.75rem;
-      min-height: 44px;
-      display: flex;
+      flex-direction: row;
+      gap: 0.25rem;
       align-items: center;
     }
 
+    nav a {
+      font-size: 0.95rem;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      justify-content: center;
+    }
+    
     nav a:hover {
-      background: rgba(73, 118, 159, 0.1);
+      background: var(--color-s-primary);
+      color: #ffffff;
+    }
+    
+    nav a.active {
       color: var(--color-s-primary);
+      background: transparent;
     }
 
     .cta-button {
-      padding: 0.5rem 1rem;
-      font-size: 0.875rem;
+      font-size: 1rem;
+      padding: 0.6rem 1.5rem;
+      order: 3; /* Apply button on right on desktop */
     }
   }
 
-  @media (max-width: 480px) {
-    .logo a {
-      font-size: 1.25rem;
-    }
-
-    .cta-button {
-      padding: 0.45rem 0.875rem;
-      font-size: 0.8rem;
-    }
+  /* Small Mobile Adjustments */
+  @media (max-width: 360px) {
+     .logo a {
+        font-size: 1.1rem;
+     } 
+     .cta-button {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+     }
   }
 </style>

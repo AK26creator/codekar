@@ -32,9 +32,9 @@
 
 html {
   scroll-padding-top: 80px;
-  scroll-behavior: auto;
-  /* Let Lenis control scrolling */
+  scroll-behavior: smooth;
   overflow-x: hidden;
+  width: 100%;
 }
 
 * {
@@ -52,6 +52,8 @@ body {
   line-height: 1.6;
   overscroll-behavior: none;
   overflow-x: hidden;
+  width: 100%;
+  position: relative;
 }
 
 /* Responsive Images */
