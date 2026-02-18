@@ -158,10 +158,9 @@
   </div>
 </div>
 
-<!-- QR Code Library -->
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-
 <script>
+  import QRCode from 'qrcode';
+
   // Wait for DOM to be fully loaded
   document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
@@ -313,16 +312,20 @@
         // Generate QR Code
         const qrContainer = document.getElementById('qr-code-container');
         if (qrContainer && paymentData.qrCodeData) {
-          // Use QRCode library
-          const QRCode = (window as any).QRCode;
-          if (QRCode) {
-            qrContainer.innerHTML = ''; // Clear previous QR
-            new QRCode(qrContainer, {
-              text: paymentData.qrCodeData,
+          try {
+            // Use node-qrcode library
+            const qrUrl = await QRCode.toDataURL(paymentData.qrCodeData, {
               width: 200,
-              height: 200,
+              margin: 2,
+              color: {
+                dark: '#000000',
+                light: '#ffffff'
+              }
             });
-          } else {
+            
+            qrContainer.innerHTML = `<img src="${qrUrl}" alt="Payment QR Code" style="width: 200px; height: 200px; display: block;" />`;
+          } catch (err) {
+            console.error('QR Code generation failed', err);
             // Fallback: show text
             qrContainer.innerHTML = `<p>QR Code: ${paymentData.qrCodeData}</p>`;
           }
