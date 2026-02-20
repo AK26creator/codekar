@@ -139,19 +139,19 @@ const team = [
   }
 
   .card-inner {
-    background: white;
-    border-radius: 20px;
+    background: var(--surface-gradient);
+    border-radius: var(--radius-soft);
     padding: 2rem;
     text-align: center;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 2px solid transparent;
+    box-shadow: var(--shadow-dark), var(--shadow-light);
+    border: 1px solid rgba(255, 255, 255, 0.4);
   }
 
   .team-card:hover .card-inner {
     transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(73, 118, 159, 0.15);
-    border-color: var(--color-s-light);
+    box-shadow: 8px 8px 16px rgba(166, 180, 200, 0.6), -8px -8px 16px rgba(255, 255, 255, 0.8);
+    border-color: rgba(255, 255, 255, 0.6);
   }
 
   .photo-container {

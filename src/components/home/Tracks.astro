@@ -99,50 +99,67 @@ import TrackModal from './TrackModal.astro';
 
 <script>
   // Track Card Click Handlers
-  const trackCards = document.querySelectorAll('.clickable-card');
-  const modal = document.getElementById('track-modal');
-  
-  trackCards.forEach(card => {
-    card.addEventListener('click', (e) => {
-      const target = e.currentTarget as HTMLElement;
-      
-      const title = target.dataset.trackTitle;
-      const desc = target.dataset.trackDesc;
-      const extended = target.dataset.trackExtended;
-      const icon = target.dataset.trackIcon;
-      const examples = JSON.parse(target.dataset.trackExamples || '[]');
-      const tech = JSON.parse(target.dataset.trackTech || '[]');
-      
-      // Populate modal
-      const modalTitle = document.getElementById('modal-title');
-      const modalDesc = document.getElementById('modal-description');
-      const modalExtended = document.getElementById('modal-extended-desc');
-      const modalIconImg = document.getElementById('modal-icon-img') as HTMLImageElement;
-      const modalExamples = document.getElementById('modal-examples');
-      const modalTech = document.getElementById('modal-tech');
-      
-      if (modalTitle) modalTitle.textContent = title || '';
-      if (modalDesc) modalDesc.textContent = desc || '';
-      if (modalExtended) modalExtended.textContent = extended || '';
-      if (modalIconImg) {
-        modalIconImg.src = icon || '';
-        modalIconImg.alt = title || '';
-      }
-      
-      // Examples
-      if (modalExamples) {
-        modalExamples.innerHTML = examples.map((ex: string) => `<li>${ex}</li>`).join('');
-      }
-      
-      // Technologies
-      if (modalTech) {
-        modalTech.innerHTML = tech.map((t: string) => `<span class="tech-tag">${t}</span>`).join('');
-      }
-      
-      // Open modal using centralized function
-      if ((window as any).openTrackModal) {
-        (window as any).openTrackModal();
-      }
+  document.addEventListener('DOMContentLoaded', () => {
+    const trackCards = document.querySelectorAll('.clickable-card');
+    
+    trackCards.forEach(card => {
+      card.addEventListener('click', (e) => {
+        const target = e.currentTarget as HTMLElement;
+        console.log('Track card clicked:', target.dataset.trackTitle);
+        
+        const title = target.dataset.trackTitle;
+        const desc = target.dataset.trackDesc;
+        const extended = target.dataset.trackExtended;
+        const icon = target.dataset.trackIcon;
+        // Safely parse JSON
+        let examples = [];
+        let tech = [];
+        try {
+           examples = JSON.parse(target.dataset.trackExamples || '[]');
+           tech = JSON.parse(target.dataset.trackTech || '[]');
+        } catch (err) {
+            console.error('Error parsing track data:', err);
+        }
+        
+        // Populate modal
+        const modalTitle = document.getElementById('modal-title');
+        const modalDesc = document.getElementById('modal-description');
+        const modalExtended = document.getElementById('modal-extended-desc');
+        const modalIconImg = document.getElementById('modal-icon-img') as HTMLImageElement;
+        const modalExamples = document.getElementById('modal-examples');
+        const modalTech = document.getElementById('modal-tech');
+        
+        if (modalTitle) modalTitle.textContent = title || '';
+        if (modalDesc) modalDesc.textContent = desc || '';
+        if (modalExtended) modalExtended.textContent = extended || '';
+        if (modalIconImg) {
+          modalIconImg.src = icon || '';
+          modalIconImg.alt = title || '';
+        }
+        
+        // Examples
+        if (modalExamples) {
+          modalExamples.innerHTML = examples.map((ex: string) => `<li>${ex}</li>`).join('');
+        }
+        
+        // Technologies
+        if (modalTech) {
+          modalTech.innerHTML = tech.map((t: string) => `<span class="tech-tag">${t}</span>`).join('');
+        }
+        
+        // Open modal using centralized function
+        if ((window as any).openTrackModal) {
+          (window as any).openTrackModal();
+        } else {
+            console.error('openTrackModal function not found on window object');
+            // Fallback: Try to open manually if function is missing
+            const modal = document.getElementById('track-modal');
+            if (modal) {
+                modal.dataset.open = 'true';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+      });
     });
   });
 </script>
@@ -191,13 +208,13 @@ import TrackModal from './TrackModal.astro';
   }
 
   .card-inner {
-    background: white;
-    border-radius: 20px;
+    background: var(--surface-gradient);
+    border-radius: var(--radius-soft);
     padding: 2rem;
     text-align: center;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 2px solid transparent;
+    box-shadow: var(--shadow-dark), var(--shadow-light);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -205,8 +222,8 @@ import TrackModal from './TrackModal.astro';
 
   .track-card:hover .card-inner {
     transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(37, 99, 235, 0.15);
-    border-color: var(--color-s-light);
+    box-shadow: 12px 12px 24px rgba(166, 180, 200, 0.6), -12px -12px 24px rgba(255, 255, 255, 0.8);
+    border-color: rgba(255, 255, 255, 0.6);
   }
 
   .photo-container {

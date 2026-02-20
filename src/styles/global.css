@@ -27,6 +27,13 @@
   --color-s-sky: #7BBDE8;
   /* Sky Blue */
 
+  /* Skeuomorphic Design System */
+  --shadow-light: -6px -6px 14px rgba(255, 255, 255, 0.7);
+  --shadow-dark: 6px 6px 12px rgba(166, 180, 200, 0.5);
+  --shadow-inset: inset 4px 4px 8px rgba(166, 180, 200, 0.5), inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+  --surface-gradient: linear-gradient(145deg, #ffffff, #f0f4f8);
+  --radius-soft: 24px;
+
   --font-body: 'Outfit', sans-serif;
 }
 
@@ -92,6 +99,40 @@ button {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* Skeuomorphic Utilities */
+.skeuo-card {
+  background: var(--surface-gradient);
+  box-shadow: var(--shadow-dark), var(--shadow-light);
+  border-radius: var(--radius-soft);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.skeuo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 8px 8px 16px rgba(166, 180, 200, 0.6), -8px -8px 16px rgba(255, 255, 255, 0.8);
+}
+
+.skeuo-btn {
+  background: var(--surface-gradient);
+  box-shadow: 5px 5px 10px rgba(166, 180, 200, 0.5), -5px -5px 10px rgba(255, 255, 255, 0.8);
+  border-radius: 50px;
+  color: var(--color-s-primary-dark);
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+.skeuo-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 7px 7px 14px rgba(166, 180, 200, 0.6), -7px -7px 14px rgba(255, 255, 255, 0.9);
+}
+
+.skeuo-btn:active {
+  transform: translateY(1px);
+  box-shadow: var(--shadow-inset);
 }
 
 /* Mask Reveal Animation Utilities */

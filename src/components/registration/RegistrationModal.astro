@@ -99,6 +99,16 @@
             <label for="project-name">Project Name (Idea)</label>
             <input type="text" id="project-name" required placeholder="Project X">
           </div>
+
+          <div class="field full-width checkbox-field">
+            <label class="checkbox-container">
+              <input type="checkbox" id="declaration" required>
+              <span class="checkmark"></span>
+              <span class="label-text">
+                I hereby declare that all my details are correct and I will follow all the rules and regulations by the organization. Any wrong behavior in the WhatsApp group will disqualify the team and no refund will be given.
+              </span>
+            </label>
+          </div>
         </div>
         
         <div class="actions">
@@ -106,9 +116,41 @@
           <button type="submit" class="submit-btn">Proceed to Payment</button>
         </div>
       </form>
+      
+      <!-- Step 3: QR Payment -->
+      <div class="step" id="step-3">
+        <div class="qt-container" style="text-align: center;">
+            <h3 style="margin-bottom: 1rem; color: var(--color-s-primary);">Scan to Pay</h3>
+            <div class="qr-wrapper" style="background: white; padding: 1rem; border-radius: 1rem; display: inline-block; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                <img id="qr-code-img" src="" alt="Payment QR" style="width: 200px; height: 200px; object-fit: contain;" />
+            </div>
+            
+            <div class="payment-details" style="margin-top: 1.5rem; text-align: left; background: #f8fafc; padding: 1rem; border-radius: 0.5rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="color: #64748b;">Amount:</span>
+                    <span id="pay-amount" style="font-weight: 700; font-size: 1.25rem;">₹0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="color: #64748b;">Transaction ID:</span>
+                    <span id="txn-id" style="font-family: monospace; font-size: 0.8rem;">---</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #64748b;">Status:</span>
+                    <span id="payment-status-badge" style="background: #fef9c3; color: #854d0e; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600;">PENDING</span>
+                </div>
+            </div>
+            
+            <p style="margin-top: 1rem; font-size: 0.875rem; color: #64748b;">
+                Please scan the QR code using any UPI app. Do not close this window.
+                <br>Redirecting automatically after payment...
+            </p>
+            
+            <div id="payment-timer" style="margin-top: 1rem; font-weight: 600; color: #ef4444;">
+                Time remaining: 05:00
+            </div>
+        </div>
+      </div>
     </div>
-
-    <div id="step-3" class="step">
       <h2>Complete Payment</h2>
       
       <!-- Loading State -->
@@ -191,12 +233,33 @@
 
     let registrationType = 'individual';
 
+    // Handle scroll locking with Lenis
+    if (modal) {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'data-open') {
+            const isOpen = modal.dataset.open === 'true';
+            if (isOpen) {
+              document.body.style.overflow = 'hidden';
+              if ((window as any).lenis) (window as any).lenis.stop();
+            } else {
+              document.body.style.overflow = '';
+              if ((window as any).lenis) (window as any).lenis.start();
+            }
+          }
+        });
+      });
+
+      observer.observe(modal, { attributes: true });
+    }
+
     // Close Modal Function
     function closeModal() {
       if (modal) {
         modal.dataset.open = "false";
         modal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
+        // Overflow and lenis are handled by observer
+        
         // Reset to step 1 after close animation
         setTimeout(() => {
           resetForm();
@@ -407,6 +470,7 @@
       form?.reset();
     }
   });
+
 </script>
 
 <style>
@@ -540,6 +604,72 @@
 
   .full-width {
     grid-column: span 2;
+  }
+
+  /* Checkbox Styles */
+  .checkbox-field {
+    margin-top: 1rem;
+  }
+
+  .checkbox-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: #475569;
+    line-height: 1.5;
+    position: relative;
+    padding-left: 0;
+  }
+
+  .checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  .checkmark {
+    position: relative;
+    height: 20px;
+    width: 20px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    margin-top: 2px;
+  }
+
+  .checkbox-container:hover input ~ .checkmark {
+    border-color: var(--color-s-primary);
+  }
+
+  .checkbox-container input:checked ~ .checkmark {
+    background-color: var(--color-s-primary);
+    border-color: var(--color-s-primary);
+  }
+
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+
+  .checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+  }
+
+  .checkbox-container .checkmark:after {
+    left: 7px;
+    top: 3px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
   }
 
   label {

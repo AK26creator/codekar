@@ -17,7 +17,7 @@
       <ul>
         <li><a href="/#home" class="nav-link">Home</a></li>
         <li><a href="/#tracks" class="nav-link">Tracks</a></li>
-        <li><a href="/#prizes" class="nav-link">Prizes</a></li>
+        <!-- <li><a href="/#prizes" class="nav-link">Prizes</a></li> -->
         <li><a href="/#about" class="nav-link">About</a></li>
         <li><a href="/#sponsors" class="nav-link">Sponsors</a></li>
         <li><a href="/#faq" class="nav-link">FAQ</a></li>
@@ -135,9 +135,11 @@
   
   header.scrolled {
     background: rgba(255, 255, 255, 0.95);
+    background: var(--surface-gradient);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
     padding: 0.75rem 0;
   }
 
@@ -281,27 +283,34 @@
 
   /* Apply Button Mobile */
   .cta-button {
-    background: var(--color-s-primary);
+    /* Base Skeuomorphic Styles matching .skeuo-btn */
+    background: linear-gradient(145deg, var(--color-s-primary), var(--color-s-primary-dark));
     color: white;
     border: none;
     padding: 0.5rem 1rem;
     border-radius: 9999px;
     font-weight: 600;
     font-size: 0.9rem;
-    transition: transform 0.2s, background-color 0.2s;
+    transition: all 0.2s ease;
     cursor: pointer;
     white-space: nowrap;
     min-height: 44px; /* Touch target */
     display: flex;
     align-items: center;
     justify-content: center;
-    order: 2; /* Between logo and hamburger on mobile */
+    order: 2;
+    box-shadow: 4px 4px 8px rgba(10, 65, 116, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .cta-button:hover {
     transform: translateY(-2px);
-    background: var(--color-s-primary-dark);
-    box-shadow: 0 4px 12px rgba(30, 90, 157, 0.3);
+    box-shadow: 6px 6px 12px rgba(10, 65, 116, 0.4), -6px -6px 12px rgba(255, 255, 255, 0.3);
+  }
+
+  .cta-button:active {
+    transform: translateY(1px);
+    box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.2), inset -3px -3px 6px rgba(255, 255, 255, 0.1);
   }
 
   /* ===== Desktop Styles (min-width: 769px) ===== */
