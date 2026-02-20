@@ -116,107 +116,23 @@
           <button type="submit" class="submit-btn">Proceed to Payment</button>
         </div>
       </form>
-      
-      <!-- Step 3: QR Payment -->
-      <div class="step" id="step-3">
-        <div class="qt-container" style="text-align: center;">
-            <h3 style="margin-bottom: 1rem; color: var(--color-s-primary);">Scan to Pay</h3>
-            <div class="qr-wrapper" style="background: white; padding: 1rem; border-radius: 1rem; display: inline-block; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
-                <img id="qr-code-img" src="" alt="Payment QR" style="width: 200px; height: 200px; object-fit: contain;" />
-            </div>
-            
-            <div class="payment-details" style="margin-top: 1.5rem; text-align: left; background: #f8fafc; padding: 1rem; border-radius: 0.5rem;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                    <span style="color: #64748b;">Amount:</span>
-                    <span id="pay-amount" style="font-weight: 700; font-size: 1.25rem;">₹0</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                    <span style="color: #64748b;">Transaction ID:</span>
-                    <span id="txn-id" style="font-family: monospace; font-size: 0.8rem;">---</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #64748b;">Status:</span>
-                    <span id="payment-status-badge" style="background: #fef9c3; color: #854d0e; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600;">PENDING</span>
-                </div>
-            </div>
-            
-            <p style="margin-top: 1rem; font-size: 0.875rem; color: #64748b;">
-                Please scan the QR code using any UPI app. Do not close this window.
-                <br>Redirecting automatically after payment...
-            </p>
-            
-            <div id="payment-timer" style="margin-top: 1rem; font-weight: 600; color: #ef4444;">
-                Time remaining: 05:00
-            </div>
-        </div>
-      </div>
     </div>
-      <h2>Complete Payment</h2>
-      
-      <!-- Loading State -->
-      <div id="payment-loading" class="payment-loading">
-        <div class="loader"></div>
-        <p>Creating your payment...</p>
+
+    <!-- Step 3: Payment Loading Mock -->
+    <div id="step-3" class="step">
+      <div class="payment-loading" style="text-align: center; padding: 3rem 0;">
+        <div class="loader-placeholder"></div>
+        <h2 style="margin-top: 1.5rem;">Redirecting to Payment...</h2>
+        <p style="color: #64748b; margin-top: 0.5rem;">Please do not refresh the page.</p>
       </div>
-
-      <!-- Payment Details -->
-      <div id="payment-details" class="payment-details" style="display: none;">
-        <div class="amount-display">
-          <span class="label">Amount to Pay:</span>
-          <span class="amount" id="payment-amount">₹0</span>
-        </div>
-
-        <div class="qr-section">
-          <h3>Scan QR Code to Pay</h3>
-          <div id="qr-code-container" class="qr-code"></div>
-          <p class="qr-note">Scan with any UPI app</p>
-        </div>
-
-        <div class="divider">
-          <span>OR</span>
-        </div>
-
-        <button type="button" id="pay-online-btn" class="pay-online-btn">
-          Pay Online
-        </button>
-
-        <div class="payment-info">
-          <p class="info-text">Order ID: <span id="display-order-id"></span></p>
-        </div>
-      </div>
-
-      <!-- Error State -->
-      <div id="payment-error" class="payment-error" style="display: none;">
-        <div class="error-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="15" y1="9" x2="9" y2="15"></line>
-            <line x1="9" y1="9" x2="15" y2="15"></line>
-          </svg>
-        </div>
-        <h3 class="error-title">Payment Creation Failed</h3>
-        <p class="error-message">We couldn't process your payment request. Please try again or contact support if the issue persists.</p>
-        <div class="error-actions">
-          <button type="button" class="retry-payment-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="23 4 23 10 17 10"></polyline>
-              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-            </svg>
-            Try Again
-          </button>
-        </div>
-      </div>
-
-      <div class="actions" style="margin-top: 1.5rem;">
-        <button type="button" class="payment-back-btn">Back to Form</button>
+      <div class="actions" style="margin-top: 2rem; display: flex; justify-content: center;">
+         <button type="button" class="payment-back-btn">Cancel & Go Back</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  import QRCode from 'qrcode';
-
   // Wait for DOM to be fully loaded
   document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
@@ -263,7 +179,7 @@
         // Reset to step 1 after close animation
         setTimeout(() => {
           resetForm();
-        }, 300);
+        }, 3000);
       }
     }
 
@@ -346,120 +262,25 @@
       step2?.classList.add('active');
     });
 
-    // Step 2: Form Submission
-    form?.addEventListener('submit', async (e) => {
+    // Step 2: Form Submission Logic Reverted
+    form?.addEventListener('submit', (e) => {
       e.preventDefault();
       
-      // Collect form data
-      const formData = {
-        registrationType,
-        fullName: (document.getElementById('full-name') as HTMLInputElement)?.value,
-        email: (document.getElementById('email') as HTMLInputElement)?.value,
-        phone: (document.getElementById('phone') as HTMLInputElement)?.value,
-        college: (document.getElementById('college') as HTMLInputElement)?.value,
-        department: (document.getElementById('dept') as HTMLInputElement)?.value,
-        year: (document.getElementById('year') as HTMLSelectElement)?.value,
-        track: (document.getElementById('track') as HTMLSelectElement)?.value,
-        projectName: (document.getElementById('project-name') as HTMLInputElement)?.value,
-        teamName: registrationType === 'team' ? (document.getElementById('team-name') as HTMLInputElement)?.value : null,
-      };
-
-      // Move to payment step
+      const submitBtn = form.querySelector('.submit-btn') as HTMLButtonElement;
+      if (submitBtn) {
+        submitBtn.innerText = 'Processing...';
+        submitBtn.disabled = true;
+      }
+      
+      // Move to step 3 (Loading screen)
       step2?.classList.remove('active');
       step3?.classList.add('active');
 
-      // Show loading state
-      const loadingEl = document.getElementById('payment-loading');
-      const detailsEl = document.getElementById('payment-details');
-      const errorEl = document.getElementById('payment-error');
-      
-      if (loadingEl) loadingEl.style.display = 'block';
-      if (detailsEl) detailsEl.style.display = 'none';
-      if (errorEl) errorEl.style.display = 'none';
-
-      // TODO: Backend API not implemented yet
-      // Temporarily just show loading state without calling the API
-      // This prevents 500 errors in console
-      
-      /* UNCOMMENT WHEN BACKEND IS READY:
-      
-      try {
-        // Call payment API
-        const response = await fetch('/api/create-payment', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
-
-        if (!response.ok) {
-          throw new Error('Payment creation failed');
-        }
-
-        const paymentData = await response.json();
-
-        // Hide loading, show details
-        if (loadingEl) loadingEl.style.display = 'none';
-        if (detailsEl) detailsEl.style.display = 'block';
-
-        // Display amount
-        const amountEl = document.getElementById('payment-amount');
-        if (amountEl) amountEl.textContent = `₹${paymentData.amount}`;
-
-        // Display order ID
-        const orderIdEl = document.getElementById('display-order-id');
-        if (orderIdEl) orderIdEl.textContent = paymentData.orderId;
-
-        // Generate QR Code
-        const qrContainer = document.getElementById('qr-code-container');
-        if (qrContainer && paymentData.qrCodeData) {
-          try {
-            // Use node-qrcode library
-            const qrUrl = await QRCode.toDataURL(paymentData.qrCodeData, {
-              width: 200,
-              margin: 2,
-              color: {
-                dark: '#000000',
-                light: '#ffffff'
-              }
-            });
-            
-            qrContainer.innerHTML = `<img src="${qrUrl}" alt="Payment QR Code" style="width: 200px; height: 200px; display: block;" />`;
-          } catch (err) {
-            console.error('QR Code generation failed', err);
-            // Fallback: show text
-            qrContainer.innerHTML = `<p>QR Code: ${paymentData.qrCodeData}</p>`;
-          }
-        }
-
-        // Setup online payment button
-        const payOnlineBtn = document.getElementById('pay-online-btn');
-        if (payOnlineBtn) {
-          payOnlineBtn.addEventListener('click', () => {
-            window.location.href = paymentData.paymentUrl;
-          });
-        }
-
-      } catch (error) {
-        console.error('Payment error:', error);
-        
-        // Hide loading, show error
-        if (loadingEl) loadingEl.style.display = 'none';
-        if (errorEl) errorEl.style.display = 'block';
-
-
-        // Setup retry button
-        const retryBtn = document.querySelector('.retry-payment-btn');
-        retryBtn?.addEventListener('click', () => {
-          // Go back to form
-          step3?.classList.remove('active');
-          step2?.classList.add('active');
-        });
-      }
-      
-      */
-      // END OF COMMENTED CODE - Uncomment above when backend is ready
+      // Simulate a redirect to the payment gateway
+      setTimeout(() => {
+        const amount = registrationType === 'team' ? '1000' : '300';
+        window.location.href = `/payment/mock-gateway?amount=${amount}`;
+      }, 1500);
     });
 
     function resetForm() {
@@ -784,235 +605,6 @@
     transform: translateX(0);
   }
 
-  /* Payment Placeholder */
-  .payment-loading {
-    text-align: center;
-    padding: 3rem 0;
-  }
-
-  .payment-details {
-    padding: 1rem 0;
-  }
-
-  .amount-display {
-    background: linear-gradient(135deg, var(--color-s-primary) 0%, var(--color-s-accent) 100%);
-    padding: 1.5rem;
-    border-radius: 1rem;
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .amount-display .label {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.875rem;
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-
-  .amount-display .amount {
-    color: white;
-    font-size: 2rem;
-    font-weight: 700;
-  }
-
-  .qr-section {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .qr-section h3 {
-    font-size: 1rem;
-    color: var(--color-s-primary-dark);
-    margin-bottom: 1rem;
-  }
-
-  .qr-code {
-    display: flex;
-    justify-content: center;
-    margin: 1rem auto;
-    padding: 1rem;
-    background: white;
-    border: 2px solid #e2e8f0;
-    border-radius: 0.5rem;
-    width: fit-content;
-  }
-
-  .qr-note {
-    font-size: 0.875rem;
-    color: #64748b;
-    margin-top: 0.5rem;
-  }
-
-  .divider {
-    text-align: center;
-    position: relative;
-    margin: 2rem 0;
-  }
-
-  .divider span {
-    background: white;
-    padding: 0 1rem;
-    color: #94a3b8;
-    font-size: 0.875rem;
-    position: relative;
-    z-index: 1;
-  }
-
-  .divider::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: #e2e8f0;
-  }
-
-  .pay-online-btn {
-    width: 100%;
-    background: var(--color-s-primary);
-    color: white;
-    border: none;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-bottom: 1rem;
-  }
-
-  .pay-online-btn:hover {
-    background: var(--color-s-primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(30, 90, 157, 0.3);
-  }
-
-  .payment-info {
-    text-align: center;
-    padding: 1rem;
-    background: #f8fafc;
-    border-radius: 0.5rem;
-  }
-
-  .info-text {
-    font-size: 0.875rem;
-    color: #64748b;
-    margin: 0;
-  }
-
-  .info-text span {
-    color: var(--color-s-primary);
-    font-weight: 600;
-  }
-
-  .payment-error {
-    text-align: center;
-    padding: 3rem 2rem;
-    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-    border-radius: 1rem;
-    border: 2px solid #fecaca;
-    animation: slideUp 0.3s ease-out;
-  }
-
-  @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .error-icon {
-    width: 80px;
-    height: 80px;
-    background: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1.5rem;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
-  }
-
-  .error-icon svg {
-    color: #ef4444;
-    animation: errorPulse 2s ease-in-out infinite;
-  }
-
-  @keyframes errorPulse {
-    0%, 100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.1);
-    }
-  }
-
-  .error-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #991b1b;
-    margin-bottom: 0.75rem;
-  }
-
-  .error-message {
-    color: #7f1d1d;
-    margin-bottom: 2rem;
-    line-height: 1.6;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .error-actions {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-  }
-
-  .retry-payment-btn {
-    background: #ef4444;
-    color: white;
-    border: none;
-    padding: 0.875rem 2rem;
-    border-radius: 0.75rem;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-  }
-
-  .retry-payment-btn:hover {
-    background: #dc2626;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
-  }
-
-  .retry-payment-btn:active {
-    transform: translateY(0);
-  }
-
-  .retry-payment-btn svg {
-    animation: rotate 2s linear infinite;
-  }
-
-  @keyframes rotate {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
   .loader {
     width: 40px;
     height: 40px;
@@ -1048,8 +640,7 @@
       font-size: 1.375rem;
     }
 
-    .submit-btn,
-    .pay-online-btn {
+    .submit-btn {
       padding: 0.875rem;
     }
 
