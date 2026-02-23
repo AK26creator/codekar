@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout title="Payment Successful - CODEKAR">
+<Layout title="Payment Successful - CODEKAR" hideCTA={true}>
   <div class="payment-status">
     <div class="status-card success">
       <div class="icon">✓</div>
@@ -18,6 +18,14 @@ import Layout from '../../layouts/Layout.astro';
           <span class="label">Amount Paid:</span>
           <span class="value" id="amount">Loading...</span>
         </div>
+        <div class="detail-row team-id-row">
+          <span class="label">Team ID:</span>
+          <span class="value highlight" id="team-id">Loading...</span>
+        </div>
+      </div>
+
+      <div class="code-note">
+        <p><strong>Note:</strong> Please save this code, it is your <strong>Team ID</strong>.</p>
       </div>
 
       <div class="next-steps">
@@ -46,6 +54,43 @@ import Layout from '../../layouts/Layout.astro';
   
   if (orderIdEl) orderIdEl.textContent = orderId;
   if (amountEl) amountEl.textContent = `₹${amount}`;
+
+  // Generate or Update unique Team ID
+  const teamIdEl = document.getElementById('team-id');
+  if (teamIdEl) {
+    // If orderId is N/A or empty, generate one, else use it
+    if (orderId && orderId !== 'N/A') {
+      teamIdEl.textContent = orderId;
+    } else {
+      const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
+      const uniqueId = `CK26-${randomStr}`;
+      teamIdEl.textContent = uniqueId;
+    }
+  }
+
+  // Confirm payment in Supabase
+  const ref = urlParams.get('ref');
+  if (ref) {
+    console.log('Confirming payment in Supabase...', ref);
+    
+    async function confirmPayment() {
+      try {
+        const { supabase } = await import('../../lib/supabase');
+        
+        const { error } = await supabase
+          .from('registrations')
+          .update({ payment_status: 'completed' })
+          .eq('id', ref);
+
+        if (error) throw error;
+        console.log('Payment status updated successfully');
+      } catch (err) {
+        console.error('Failed to update payment status:', err);
+      }
+    }
+
+    confirmPayment();
+  }
 </script>
 
 <style>
@@ -118,6 +163,36 @@ import Layout from '../../layouts/Layout.astro';
   .value {
     color: var(--color-s-primary);
     font-weight: 600;
+  }
+
+  .team-id-row {
+    margin-top: 1rem;
+    padding-top: 1rem !important;
+    border-top: 2px solid #e2e8f0 !important;
+  }
+
+  .value.highlight {
+    color: var(--color-s-primary-dark);
+    font-size: 1.5rem;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 2px;
+    background: #eff6ff;
+    padding: 0.25rem 1rem;
+    border-radius: 0.5rem;
+  }
+
+  .code-note {
+    background: #fffbeb;
+    border: 1px solid #fef3c7;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .code-note p {
+    color: #92400e;
+    font-size: 0.95rem;
+    margin: 0;
   }
 
   .next-steps {

@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout title="Payment Cancelled - CODEKAR">
+<Layout title="Payment Cancelled - CODEKAR" hideCTA={true}>
   <div class="payment-status">
     <div class="status-card cancel">
       <div class="icon">✕</div>
@@ -25,17 +25,8 @@ import Layout from '../../layouts/Layout.astro';
   const retryBtn = document.getElementById('retry-btn');
   
   retryBtn?.addEventListener('click', () => {
-    // Reopen registration modal
-    const modal = document.getElementById('registration-modal');
-    if (modal) {
-      modal.dataset.open = "true";
-      document.body.style.overflow = 'hidden';
-    }
-    
-    // Navigate to home if modal not found
-    if (!modal) {
-      window.location.href = '/';
-    }
+    // Redirect to home with registration hash to trigger the modal
+    window.location.href = '/#registration';
   });
 </script>
 

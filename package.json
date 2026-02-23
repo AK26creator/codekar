@@ -9,6 +9,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.97.0",
     "@types/qrcode": "^1.5.6",
     "@types/uuid": "^10.0.0",
     "astro": "^5.17.1",

@@ -262,8 +262,8 @@
       step2?.classList.add('active');
     });
 
-    // Step 2: Form Submission Logic Reverted
-    form?.addEventListener('submit', (e) => {
+    // Step 2: Form Submission Logic Integrated with Supabase
+    form?.addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const submitBtn = form.querySelector('.submit-btn') as HTMLButtonElement;
@@ -271,17 +271,103 @@
         submitBtn.innerText = 'Processing...';
         submitBtn.disabled = true;
       }
+
+      // Collect form data
+      const fullName = (document.getElementById('full-name') as HTMLInputElement)?.value;
+      const email = (document.getElementById('email') as HTMLInputElement)?.value;
+      const phone = (document.getElementById('phone') as HTMLInputElement)?.value;
+      const college = (document.getElementById('college') as HTMLInputElement)?.value;
+      const department = (document.getElementById('dept') as HTMLInputElement)?.value;
+      const year = (document.getElementById('year') as HTMLSelectElement)?.value;
+      const track = (document.getElementById('track') as HTMLSelectElement)?.value;
+      const projectName = (document.getElementById('project-name') as HTMLInputElement)?.value;
+      const teamName = registrationType === 'team' ? (document.getElementById('team-name') as HTMLInputElement)?.value : null;
       
+      // Member names
+      const member2 = (document.getElementById('member-2') as HTMLInputElement)?.value;
+      const member3 = (document.getElementById('member-3') as HTMLInputElement)?.value;
+      const member4 = (document.getElementById('member-4') as HTMLInputElement)?.value;
+
+      // Generate unique Team ID
+      const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
+      const teamId = `CK26-${randomStr}`;
+
       // Move to step 3 (Loading screen)
       step2?.classList.remove('active');
       step3?.classList.add('active');
 
-      // Simulate a redirect to the payment gateway
-      setTimeout(() => {
-        const amount = registrationType === 'team' ? '1000' : '300';
-        window.location.href = `/payment/mock-gateway?amount=${amount}`;
-      }, 1500);
+      try {
+        const { supabase } = await import('../../lib/supabase');
+        
+        const { data, error } = await supabase
+          .from('registrations')
+          .insert([
+            {
+              registration_type: registrationType,
+              full_name: fullName,
+              email: email,
+              phone: phone,
+              college: college,
+              department: department,
+              year_of_study: parseInt(year),
+              team_name: teamName,
+              member_2_name: member2,
+              member_3_name: member3,
+              member_4_name: member4,
+              track: track,
+              project_name: projectName,
+              team_id: teamId,
+              payment_status: 'pending',
+              amount: registrationType === 'team' ? 1000 : 300
+            }
+          ])
+          .select();
+
+        if (error) throw error;
+        
+        const recordId = data[0].id;
+
+        // Simulate a redirect to the payment gateway
+        setTimeout(() => {
+          const amount = registrationType === 'team' ? '1000' : '300';
+          // Pass recordId and generated teamId to the gateway and success page
+          window.location.href = `/payment/mock-gateway?amount=${amount}&order=${teamId}&ref=${recordId}`;
+        }, 1500);
+
+      } catch (err) {
+        console.error('Registration failed:', err);
+        alert('Registration failed. Please check your connection or try again.');
+        
+        // Reset button
+        if (submitBtn) {
+          submitBtn.innerText = 'Proceed to Payment';
+          submitBtn.disabled = false;
+        }
+        
+        // Go back to form
+        step3?.classList.remove('active');
+        step2?.classList.add('active');
+      }
     });
+
+    // Open modal if hash is #registration
+    function checkHash() {
+      if (window.location.hash === '#registration') {
+        const regBtn = document.querySelector('[data-registration-trigger]');
+        if (regBtn) {
+          (regBtn as HTMLElement).click();
+        } else if (modal) {
+          // Fallback if trigger button not found
+          modal.dataset.open = "true";
+          modal.setAttribute('aria-hidden', 'false');
+        }
+      }
+    }
+
+    // Check on load
+    checkHash();
+    // Check on hash change
+    window.addEventListener('hashchange', checkHash);
 
     function resetForm() {
       step1?.classList.add('active');
@@ -335,9 +421,30 @@
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     transform: translateY(20px);
     transition: transform 0.3s;
-    max-height: 90vh;
+    max-height: 85vh;
     overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     pointer-events: auto;
+  }
+
+  /* Custom scrollbar for better visibility */
+  .modal-content::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .modal-content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .modal-content::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+  }
+
+  .modal-content::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
   }
 
   .modal-content * {
@@ -626,10 +733,11 @@
 
     .modal-content {
       width: 100%;
-      height: 100%;
+      height: 100vh;
       max-height: 100vh;
       border-radius: 0;
       padding: 1.5rem;
+      overflow-y: auto;
     }
 
     .type-btn {

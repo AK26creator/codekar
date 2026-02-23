@@ -6,9 +6,10 @@ import RegistrationModal from '../components/registration/RegistrationModal.astr
 
 interface Props {
 	title: string;
+	hideCTA?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, hideCTA = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -27,7 +28,7 @@ const { title } = Astro.props;
 		<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 	</head>
 	<body>
-		<Header />
+		<Header hideCTA={hideCTA} />
 		
 		<main>
 			<slot />
