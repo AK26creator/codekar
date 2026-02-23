@@ -435,17 +435,28 @@
       try {
         const { supabase } = await import('../../lib/supabase');
         
-        // Loop to ensure uniqueness
-        while(!isUnique) {
+        // Loop to ensure uniqueness (with max 5 attempts to prevent infinite loops on DB failure)
+        let attempts = 0;
+        while(!isUnique && attempts < 5) {
           uniqueCode = isTeam ? `TEAM-2026-${randomStr()}` : `IND-2026-${randomStr()}`;
           const { data, error } = await supabase
             .from('registrations')
             .select('id')
             .eq('generated_code', uniqueCode);
             
-          if (!error && data.length === 0) {
+          if (error) {
+            console.error('Supabase select error:', error);
+            throw new Error(error.message || 'Database error checking code uniqueness');
+          }
+            
+          if (data && data.length === 0) {
             isUnique = true;
           }
+          attempts++;
+        }
+        
+        if (!isUnique) {
+             throw new Error("Failed to generate a unique code. Please try again.");
         }
 
         // Map frontend fields to DB schema
@@ -476,6 +487,21 @@
 
         if (error) throw error;
 
+        // Trigger the Confirmation Email Edge Function
+        // Using "invoke" handles the JWT authorization automatically via the Supabase client
+        try {
+          supabase.functions.invoke('send-confirmation-email', {
+            body: {
+              name: isTeam ? teamName || fullName : fullName,
+              email: email,
+              unique_code: uniqueCode
+            }
+          });
+        } catch (emailErr) {
+          console.error("Failed to trigger email function:", emailErr);
+          // We intentionally don't throw here so the user still gets the success UI if only the email fails.
+        }
+
         // Show Success Step
         step2?.classList.remove('active');
         step3?.classList.add('active');
@@ -483,9 +509,10 @@
         const codeDisplay = document.getElementById('generated-code-display');
         if(codeDisplay) codeDisplay.textContent = uniqueCode;
 
-      } catch (err) {
+      } catch (err: any) {
         console.error('Registration failed:', err);
-        alert('Registration failed. Please check your connection or try again.');
+        // Show the actual error message dynamically now
+        alert(`Registration failed: ${err.message || 'Unexpected error'}. Please try again.`);
         
         // Reset button
         if (submitBtn) {
