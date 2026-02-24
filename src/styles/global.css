@@ -39,7 +39,7 @@
 
 html {
   scroll-padding-top: 80px;
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth; REMOVED - Conflicts with Lenis */
   overflow-x: hidden;
   width: 100%;
 }
