@@ -469,9 +469,9 @@
           track: track,
           project_name: projectName,
           
-          full_name: !isTeam ? fullName : null,
-          email: !isTeam ? email : null,
-          phone: !isTeam ? phone : null,
+          full_name: fullName,  // always required (team leader's name for teams)
+          email: email,  // always required (team leader's email for teams)
+          phone: phone,  // always required (team leader's phone for teams)
           
           team_name: isTeam ? teamName : null,
           team_leader_name: isTeam ? fullName : null,
