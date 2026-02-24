@@ -461,7 +461,7 @@
 
         // Map frontend fields to DB schema
         const insertData = {
-          event_type: isTeam ? 'Team' : 'Individual',
+          registration_type: isTeam ? 'team' : 'individual',
           generated_code: uniqueCode,
           college: college,
           department: department,
