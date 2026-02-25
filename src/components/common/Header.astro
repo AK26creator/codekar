@@ -86,11 +86,40 @@ const { hideCTA = false } = Astro.props;
     // Close on backdrop click
     navBackdrop?.addEventListener('click', closeMobileNav);
 
-    // Close on nav link click (mobile)
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        closeMobileNav();
+    // Smooth scroll helper: scrolls to a hash target without page reload
+    function smoothScrollTo(hash: string) {
+      const targetId = hash.replace('#', '');
+      const targetEl = document.getElementById(targetId);
+      if (!targetEl) return false;
+
+      const lenis = (window as any).lenis;
+      if (lenis) {
+        lenis.scrollTo(targetEl, { offset: -80 }); // offset for sticky header
+      } else {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      // Update URL hash without triggering navigation
+      history.pushState(null, '', hash);
+      return true;
+    }
+
+    // Intercept all hash-based navigation links on the page
+    // This covers both Header nav links AND Footer quick links
+    const allHashLinks = document.querySelectorAll('a[href^="/#"]');
+    const isHomePage = window.location.pathname === '/' || window.location.pathname === '/index.html';
+
+    allHashLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        const href = (link as HTMLAnchorElement).getAttribute('href') || '';
+        const hash = href.replace('/', ''); // "/#about" -> "#about"
+
+        if (isHomePage && hash) {
+          e.preventDefault();
+          closeMobileNav();
+          smoothScrollTo(hash);
+        }
+        // On other pages, let the browser navigate to /#section naturally
       });
     });
 
@@ -100,6 +129,8 @@ const { hideCTA = false } = Astro.props;
     });
 
     // Set active link based on current page/hash
+    const navLinks = document.querySelectorAll('.nav-link');
+
     const setActiveLink = () => {
       const currentPath = window.location.pathname;
       const currentHash = window.location.hash;
@@ -120,6 +151,14 @@ const { hideCTA = false } = Astro.props;
 
     setActiveLink();
     window.addEventListener('hashchange', setActiveLink);
+
+    // On page load, if there's a hash in the URL, scroll to it smoothly
+    if (isHomePage && window.location.hash) {
+      // Small delay to ensure Lenis is initialized
+      setTimeout(() => {
+        smoothScrollTo(window.location.hash);
+      }, 300);
+    }
   });
 </script>
 
