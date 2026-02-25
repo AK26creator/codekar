@@ -38,8 +38,10 @@ const { title, hideCTA = false } = Astro.props;
 		<!-- Global Modal -->
 		<RegistrationModal />
 		
-		<script type="module" src="/src/scripts/smoothScroll.ts"></script>
-		<script type="module" src="/src/scripts/maskReveal.ts"></script>
+		<script>
+			import '../scripts/smoothScroll';
+			import '../scripts/maskReveal';
+		</script>
 	</body>
 </html>
 
