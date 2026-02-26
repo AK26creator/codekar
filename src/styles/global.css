@@ -42,6 +42,8 @@ html {
   scroll-behavior: smooth;
   overflow-x: hidden;
   width: 100%;
+  touch-action: pan-y;
+  /* Enforce native vertical scrolling */
 }
 
 * {
@@ -57,12 +59,16 @@ body {
   background: var(--color-s-bg);
   color: var(--color-s-text);
   line-height: 1.6;
-  overscroll-behavior: none;
+  overscroll-behavior-y: auto;
+  /* Restored for native pull-to-refresh/bounce */
+  overscroll-behavior-x: none;
   overflow-x: hidden;
   width: 100%;
   position: relative;
   -webkit-overflow-scrolling: touch;
   /* Momentum scrolling on iOS */
+  touch-action: pan-y;
+  /* Critical: prioritize single-finger vertical scroll */
 }
 
 body.scroll-locked {

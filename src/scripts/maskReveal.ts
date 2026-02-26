@@ -10,7 +10,10 @@ if (lenis) {
     lenis.on('scroll', ScrollTrigger.update);
 
     gsap.ticker.add((time) => {
-        lenis!.raf(time * 1000);
+        // Critical Mobile Fix: Only call raf if lenis is active
+        if ((window as any).lenis) {
+            (window as any).lenis.raf(time * 1000);
+        }
     });
 }
 
