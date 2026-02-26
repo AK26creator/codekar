@@ -293,8 +293,7 @@ const { hideCTA = false } = Astro.props;
     top: 0;
     right: -100%;
     width: min(300px, 85vw);
-    height: 100vh;
-    height: 100dvh;
+    height: 100dvh; /* Switched to entirely use dynamic viewport height */
     background: white;
     padding: 6rem 1.5rem 2rem;
     z-index: 999;
@@ -409,6 +408,8 @@ const { hideCTA = false } = Astro.props;
       overflow-y: visible;
       flex-direction: row;
       order: 2; /* Nav in middle on desktop */
+      visibility: visible;
+      pointer-events: auto;
     }
 
     nav ul {

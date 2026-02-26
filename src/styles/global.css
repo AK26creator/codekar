@@ -39,7 +39,7 @@
 
 html {
   scroll-padding-top: 80px;
-  /* scroll-behavior: smooth; REMOVED - Conflicts with Lenis */
+  scroll-behavior: smooth;
   overflow-x: hidden;
   width: 100%;
 }
@@ -61,11 +61,12 @@ body {
   overflow-x: hidden;
   width: 100%;
   position: relative;
+  -webkit-overflow-scrolling: touch;
+  /* Momentum scrolling on iOS */
 }
 
 body.scroll-locked {
   overflow: hidden !important;
-  height: 100vh;
   height: 100dvh;
 }
 
@@ -100,9 +101,24 @@ button,
 }
 
 a:active,
-button:active {
+button:active,
+.interactive:active {
   transform: scale(0.96);
   opacity: 0.8;
+}
+
+/* Enforce Minimum Touch Targets (Apple/Google Guidelines) */
+button,
+.btn,
+.cta-button,
+.dock-item,
+.social-icon,
+.tab-btn {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .no-select {
