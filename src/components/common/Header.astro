@@ -48,7 +48,7 @@ const { hideCTA = false } = Astro.props;
       const modal = document.getElementById('registration-modal');
       if (modal) {
         modal.dataset.open = "true";
-        document.body.style.overflow = 'hidden';
+        document.body.classList.add('scroll-locked');
       } else {
         console.error('Registration modal not found');
       }
@@ -64,7 +64,7 @@ const { hideCTA = false } = Astro.props;
       hamburger?.classList.add('active');
       hamburger?.setAttribute('aria-expanded', 'true');
       navBackdrop?.classList.add('active');
-      document.body.style.overflow = 'hidden';
+      document.body.classList.add('scroll-locked');
     }
 
     function closeMobileNav() {
@@ -72,7 +72,7 @@ const { hideCTA = false } = Astro.props;
       hamburger?.classList.remove('active');
       hamburger?.setAttribute('aria-expanded', 'false');
       navBackdrop?.classList.remove('active');
-      document.body.style.overflow = '';
+      document.body.classList.remove('scroll-locked');
     }
 
     hamburger?.addEventListener('click', () => {

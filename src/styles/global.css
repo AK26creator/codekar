@@ -63,6 +63,12 @@ body {
   position: relative;
 }
 
+body.scroll-locked {
+  overflow: hidden !important;
+  height: 100vh;
+  height: 100dvh;
+}
+
 /* Responsive Images */
 img {
   max-width: 100%;
