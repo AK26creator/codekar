@@ -185,13 +185,14 @@
         mutations.forEach((mutation) => {
           if (mutation.type === 'attributes' && mutation.attributeName === 'data-open') {
             const isOpen = modal.dataset.open === 'true';
+            // Keep aria-hidden in sync with data-open
+            modal.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+
             if (isOpen) {
               document.body.classList.add('scroll-locked');
-              // Ensure we stop Lenis if it exists
               if ((window as any).lenis) (window as any).lenis.stop();
             } else {
               document.body.classList.remove('scroll-locked');
-              // Ensure we restart Lenis if it exists
               if ((window as any).lenis) (window as any).lenis.start();
             }
           }
@@ -221,11 +222,11 @@
     });
 
     // Tab Switching Logic
-    tabBtns.forEach(btn => {
+    tabBtns?.forEach(btn => {
       btn.addEventListener('click', () => {
         // Remove active class from all tabs and contents
         tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
+        tabContents?.forEach(c => c.classList.remove('active'));
         
         // Add active to clicked tab
         btn.classList.add('active');
@@ -300,7 +301,7 @@
           if(teamNameField) teamNameField.style.display = 'block';
           (document.getElementById('team-name') as HTMLInputElement).value = data.team_name || '';
           
-          document.querySelectorAll('.team-member-field').forEach(el => {
+          document.querySelectorAll('.team-member-field')?.forEach(el => {
             (el as HTMLElement).style.display = 'flex';
           });
           
@@ -316,7 +317,7 @@
           if(emailLabel) emailLabel.textContent = "Team Lead Email";
         } else {
              if(teamNameField) teamNameField.style.display = 'none';
-             document.querySelectorAll('.team-member-field').forEach(el => {
+             document.querySelectorAll('.team-member-field')?.forEach(el => {
                 (el as HTMLElement).style.display = 'none';
              });
         }
@@ -338,7 +339,7 @@
 
 
     // Step 1: Selection
-    typeBtns.forEach(btn => {
+    typeBtns?.forEach(btn => {
       btn.addEventListener('click', () => {
         // @ts-ignore
         registrationType = btn.dataset.type;
@@ -360,7 +361,7 @@
           document.getElementById('team-name')?.setAttribute('required', 'true');
           
           // Show team member fields
-          document.querySelectorAll('.team-member-field').forEach(el => {
+          document.querySelectorAll('.team-member-field')?.forEach(el => {
             (el as HTMLElement).style.display = 'flex';
           });
           
@@ -377,7 +378,7 @@
           document.getElementById('team-name')?.removeAttribute('required');
           
           // Hide team member fields
-          document.querySelectorAll('.team-member-field').forEach(el => {
+          document.querySelectorAll('.team-member-field')?.forEach(el => {
             (el as HTMLElement).style.display = 'none';
           });
 
@@ -594,12 +595,14 @@
     justify-content: center;
     align-items: center;
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s, visibility 0.3s;
   }
 
   .modal[data-open="true"] {
     opacity: 1;
+    visibility: visible;
     pointer-events: all;
   }
 
@@ -692,6 +695,7 @@
   .tab-btn.active {
     color: var(--color-s-primary, #2563eb);
     background: #eff6ff;
+    transform: scale(1.05);
   }
 
   .tab-content {
@@ -761,6 +765,7 @@
   label { font-size: 0.875rem; font-weight: 500; color: #475569; }
   input, select {
     padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: #f8fafc;
+    font-size: 16px; /* Prevents iOS auto-zoom on focus */
   }
   input:focus, select:focus {
     outline: none; border-color: var(--color-s-primary, #2563eb);

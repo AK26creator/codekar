@@ -106,21 +106,37 @@ const { hideCTA = false } = Astro.props;
 
     // Intercept all hash-based navigation links on the page
     // This covers both Header nav links AND Footer quick links
-    const allHashLinks = document.querySelectorAll('a[href^="/#"]');
-    const isHomePage = window.location.pathname === '/' || window.location.pathname === '/index.html';
+    const allHashLinks = document.querySelectorAll('a[href^="/#"], a[href^="#"]');
+    
+    // More robust home page check
+    const isHomePage = window.location.pathname === '/' || 
+                       window.location.pathname === '/index.html' || 
+                       window.location.pathname.endsWith('/');
 
     allHashLinks.forEach(link => {
       link.addEventListener('click', (e) => {
         const href = (link as HTMLAnchorElement).getAttribute('href') || '';
-        const hash = href.replace('/', ''); // "/#about" -> "#about"
+        // Handle both "/#about" and "#about"
+        const hash = href.includes('#') ? '#' + href.split('#')[1] : '';
+        
+        // Always close mobile nav when a link is clicked
+        closeMobileNav();
 
-        if (isHomePage && hash) {
-          e.preventDefault();
-          closeMobileNav();
-          smoothScrollTo(hash);
+        if (isHomePage && hash && hash !== '#') {
+          const targetEl = document.querySelector(hash);
+          if (targetEl) {
+            e.preventDefault();
+            smoothScrollTo(hash);
+          }
         }
-        // On other pages, let the browser navigate to /#section naturally
+        // On other pages or if target doesn't exist, let browser navigate naturally
       });
+    });
+
+    // Also close mobile nav on OTHER (non-hash) links
+    const otherLinks = document.querySelectorAll('nav a:not([href^="/#"]):not([href^="#"])');
+    otherLinks.forEach(link => {
+      link.addEventListener('click', () => closeMobileNav());
     });
 
     // Close on Escape key
@@ -216,10 +232,11 @@ const { hideCTA = false } = Astro.props;
     border: 1px solid rgba(0, 0, 0, 0.08);
     cursor: pointer;
     padding: 8px;
-    z-index: 1001;
+    z-index: 1010; /* Higher than nav to stay clickable */
     border-radius: 10px;
     transition: background 0.2s;
     order: 3; /* Hamburger always on right in mobile flex */
+    touch-action: manipulation;
   }
 
   .hamburger:hover {
@@ -286,10 +303,14 @@ const { hideCTA = false } = Astro.props;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    visibility: hidden;
+    pointer-events: none;
   }
 
   nav.open {
     right: 0;
+    visibility: visible;
+    pointer-events: auto;
   }
 
   nav ul {
@@ -341,6 +362,8 @@ const { hideCTA = false } = Astro.props;
     order: 2;
     box-shadow: 4px 4px 8px rgba(10, 65, 116, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1010;
+    touch-action: manipulation;
   }
 
   .cta-button:hover {
@@ -408,7 +431,8 @@ const { hideCTA = false } = Astro.props;
     
     nav a.active {
       color: var(--color-s-primary);
-      background: transparent;
+      background: rgba(73, 118, 159, 0.05);
+      border-radius: 9999px;
     }
 
     .cta-button {

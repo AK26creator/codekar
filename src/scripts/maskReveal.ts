@@ -5,12 +5,14 @@ import lenis from './smoothScroll';
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 
-// Integrate ScrollTrigger with Lenis smooth scroll
-lenis.on('scroll', ScrollTrigger.update);
+// Integrate ScrollTrigger with Lenis smooth scroll if it exists
+if (lenis) {
+    lenis.on('scroll', ScrollTrigger.update);
 
-gsap.ticker.add((time) => {
-    lenis.raf(time * 1000);
-});
+    gsap.ticker.add((time) => {
+        lenis!.raf(time * 1000);
+    });
+}
 
 gsap.ticker.lagSmoothing(0);
 
