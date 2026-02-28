@@ -119,27 +119,91 @@
           
           <div class="actions">
             <button type="button" class="back-btn">Back</button>
-            <button type="submit" class="submit-btn">Submit Registration</button>
+            <button type="submit" class="submit-btn">Proceed to Payment</button>
           </div>
         </form>
       </div>
 
-      <!-- Step 3: Registration Success -->
+      <!-- Step 3: QR Code Reveal -->
       <div id="step-3" class="step">
-        <div class="success-message" style="text-align: center; padding: 2rem 0;">
-          <div class="success-icon">✅</div>
-          <h2 style="margin-top: 1.5rem; color: #10b981;">Registration Successful!</h2>
-          <p style="color: #64748b; margin-top: 0.5rem; font-size: 1.1rem;">Your Unique Participation Code is:</p>
+        <div class="payment-card reveal-animation">
+          <div class="timer-badge">⌛ <span id="payment-timer">05:00</span></div>
+          <h2>Scan the QR to Complete Your Payment</h2>
           
-          <div class="code-box">
-            <span id="generated-code-display">XXX-2026-XXXXX</span>
-            <button type="button" class="copy-btn" id="copy-code-btn" aria-label="Copy Code">📋 Copy</button>
+          <div class="qr-container">
+            <img id="qr-image" src="" alt="Payment QR Code">
           </div>
           
-          <p style="color: #ef4444; margin-top: 1rem; font-weight: 500;">Please save this code! You will need it.</p>
+          <div class="payment-details">
+            <p class="amount-display">Amount: <span id="display-payment-amount">₹299</span></p>
+            <p class="payment-instructions">Pay using any UPI app (GPay, PhonePe, Paytm). Take a screenshot after payment.</p>
+          </div>
+
+          <div id="timer-expired-msg" class="error-msg" style="display: none;">
+            <p>Payment session expired. Please retry.</p>
+            <button type="button" class="retry-btn" id="retry-payment-btn">Retry Payment</button>
+          </div>
+          
+          <div class="actions">
+            <button type="button" class="cancel-btn" id="cancel-payment-btn">Cancel Payment</button>
+            <button type="button" class="submit-btn" id="ive-paid-btn">I've Paid</button>
+          </div>
         </div>
-        <div class="actions" style="margin-top: 2rem; display: flex; justify-content: center;">
-           <button type="button" class="done-btn" onclick="document.querySelector('#registration-modal .close-btn').click();">Done</button>
+      </div>
+
+      <!-- Step 4: Payment Confirmation Form -->
+      <div id="step-4" class="step">
+        <h2>Payment Confirmation</h2>
+        <p style="color: #64748b; margin-bottom: 1.5rem;">Enter transaction details to complete registration.</p>
+        <form id="payment-confirm-form">
+          <div class="form-grid">
+            <div class="field full-width">
+              <label for="transaction-id">Transaction ID (Required)</label>
+              <input type="text" id="transaction-id" required placeholder="e.g. 123456789012">
+            </div>
+            
+            <div class="field full-width">
+              <label for="confirm-team-name">Team Name (Required)</label>
+              <input type="text" id="confirm-team-name" required placeholder="Your Team Name">
+            </div>
+
+            <div class="field full-width">
+              <label for="payer-phone">Phone Number of Payer (Required)</label>
+              <input type="tel" id="payer-phone" required pattern="[0-9]{10}" placeholder="10 Digit Number">
+            </div>
+          </div>
+          
+          <div class="actions" style="margin-top: 2rem;">
+            <button type="button" class="back-btn" id="back-to-qr-btn">Back</button>
+            <button type="submit" class="submit-btn" id="complete-reg-btn" disabled>Complete Registration</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Step 5: Success & Invoice & WhatsApp Join -->
+      <div id="step-5" class="step">
+        <div class="success-message" style="text-align: center; padding: 1.5rem 0;">
+          <div class="success-icon">🎉</div>
+          <h2 style="margin-top: 1rem; color: #10b981;">Payment Successful!</h2>
+          <p style="color: #64748b; margin-top: 0.5rem; font-size: 1.1rem;">Your registration is complete.</p>
+          
+          <div class="code-box">
+             <span id="final-generated-code">IND-2026-XXXXX</span>
+             <small style="display: block; margin-top: 0.5rem; color: #64748b;">Participation Code</small>
+          </div>
+
+          <div class="action-card">
+            <h3>Join WhatsApp Group</h3>
+            <p>Stay updated with event alerts and announcements.</p>
+            <div class="action-buttons">
+              <a href="https://chat.whatsapp.com/G5v7tXGzX7z7z7z7z7z7" target="_blank" class="whatsapp-btn">Join Official Group</a>
+              <button type="button" class="invoice-btn" id="download-invoice-btn">Download Invoice (PDF)</button>
+            </div>
+          </div>
+          
+          <div class="actions" style="margin-top: 2rem; justify-content: center;">
+             <button type="button" class="done-btn" onclick="document.querySelector('#registration-modal .close-btn').click();">Close</button>
+          </div>
         </div>
       </div>
     </div>
@@ -163,21 +227,38 @@
   document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
     const modal = document.getElementById('registration-modal');
-    // Using modal.querySelector ensures we only get elements within this specific modal
     const overlay = modal?.querySelector('.modal-overlay');
     const closeBtn = modal?.querySelector('.close-btn');
     const typeBtns = modal?.querySelectorAll('.type-btn');
     const step1 = document.getElementById('step-1');
     const step2 = document.getElementById('step-2');
     const step3 = document.getElementById('step-3');
+    const step4 = document.getElementById('step-4');
+    const step5 = document.getElementById('step-5');
     const backBtn = document.querySelector('.back-btn');
     const form = document.getElementById('reg-form');
+    const paymentForm = document.getElementById('payment-confirm-form') as HTMLFormElement;
     const teamNameField = document.getElementById('team-name-field');
     const formTitle = document.getElementById('form-title');
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
+    // Payment Workflow Elements
+    const qrImage = document.getElementById('qr-image') as HTMLImageElement;
+    const paymentTimerDisplay = document.getElementById('payment-timer');
+    const displayAmount = document.getElementById('display-payment-amount');
+    const timerExpiredMsg = document.getElementById('timer-expired-msg');
+    const ivePaidBtn = document.getElementById('ive-paid-btn');
+    const cancelPaymentBtn = document.getElementById('cancel-payment-btn');
+    const retryPaymentBtn = document.getElementById('retry-payment-btn');
+    const backToQrBtn = document.getElementById('back-to-qr-btn');
+    const completeRegBtn = document.getElementById('complete-reg-btn') as HTMLButtonElement;
+    const downloadInvoiceBtn = document.getElementById('download-invoice-btn');
+
     let registrationType = 'individual';
+    let paymentTimer: any = null;
+    let timeLeft = 300; // 5 minutes
+    let registrationData: any = {};
 
     // Handle scroll locking with Lenis
     if (modal) {
@@ -185,7 +266,6 @@
         mutations.forEach((mutation) => {
           if (mutation.type === 'attributes' && mutation.attributeName === 'data-open') {
             const isOpen = modal.dataset.open === 'true';
-            // Keep aria-hidden in sync with data-open
             modal.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
 
             if (isOpen) {
@@ -194,6 +274,7 @@
             } else {
               document.body.classList.remove('scroll-locked');
               if ((window as any).lenis) (window as any).lenis.start();
+              stopTimer();
             }
           }
         });
@@ -224,11 +305,8 @@
     // Tab Switching Logic
     tabBtns?.forEach(btn => {
       btn.addEventListener('click', () => {
-        // Remove active class from all tabs and contents
         tabBtns.forEach(b => b.classList.remove('active'));
         tabContents?.forEach(c => c.classList.remove('active'));
-        
-        // Add active to clicked tab
         btn.classList.add('active');
         // @ts-ignore
         const target = btn.dataset.target;
@@ -237,114 +315,12 @@
       });
     });
 
-    // Lookup Functionality
-    const lookupBtn = document.getElementById('lookup-btn');
-    const lookupError = document.getElementById('lookup-error');
-    const lookupCodeInput = document.getElementById('lookup-code') as HTMLInputElement;
-
-    lookupBtn?.addEventListener('click', async () => {
-      const code = lookupCodeInput?.value.trim().toUpperCase();
-      if (!code) {
-        if(lookupError) {
-          lookupError.textContent = "Please enter a code.";
-          lookupError.style.display = "block";
-        }
-        return;
-      }
-      
-      const originalText = lookupBtn.textContent;
-      lookupBtn.textContent = 'Searching...';
-      (lookupBtn as HTMLButtonElement).disabled = true;
-      if (lookupError) lookupError.style.display = 'none';
-
-      try {
-        const { supabase } = await import('../../lib/supabase');
-        const { data, error } = await supabase
-          .from('registrations')
-          .select('*')
-          .eq('generated_code', code)
-          .single();
-
-        if (error || !data) {
-          throw new Error('Invalid code');
-        }
-
-        // We got the data! Switch tabs and auto-fill the form
-        // @ts-ignore
-        document.querySelector('[data-target="new-registration"]').click();
-        
-        // Since Apps script doesn't explicitly return event_type yet, 
-        // we can infer it from the code prefix (IND- or TEAM-)
-        registrationType = code.startsWith('TEAM') ? 'team' : 'individual';
-        
-        // Disable form fields to indicate read-only view
-        const formElements = form?.elements;
-        if(formElements) {
-            for(let i=0; i<formElements.length; i++) {
-                (formElements[i] as HTMLInputElement).disabled = true;
-            }
-        }
-        
-        // Fill form fields
-        if(formTitle) formTitle.textContent = `${data.event_type} Registration (Read-only)`;
-        const submitBtn = form?.querySelector('.submit-btn') as HTMLButtonElement;
-        if(submitBtn) submitBtn.style.display = 'none';
-        
-        // Map data to fields
-        (document.getElementById('full-name') as HTMLInputElement).value = data.event_type === 'Team' ? data.team_leader_name : data.full_name;
-        (document.getElementById('email') as HTMLInputElement).value = data.event_type === 'Team' ? data.leader_email : data.email;
-        (document.getElementById('phone') as HTMLInputElement).value = data.event_type === 'Team' ? data.leader_phone : data.phone;
-        (document.getElementById('college') as HTMLInputElement).value = data.college || '';
-        (document.getElementById('dept') as HTMLInputElement).value = data.department || '';
-        
-        if (registrationType === 'team') {
-          if(teamNameField) teamNameField.style.display = 'block';
-          (document.getElementById('team-name') as HTMLInputElement).value = data.team_name || '';
-          
-          document.querySelectorAll('.team-member-field')?.forEach(el => {
-            (el as HTMLElement).style.display = 'flex';
-          });
-          
-          // Try to parse member names if stored in member_details or directly
-          // For simplicity assuming we stored them in member_2_name, etc. for backward compat if kept the same schema
-          (document.getElementById('member-2') as HTMLInputElement).value = data.member_2_name || '';
-          (document.getElementById('member-3') as HTMLInputElement).value = data.member_3_name || '';
-          (document.getElementById('member-4') as HTMLInputElement).value = data.member_4_name || '';
-          
-          const nameLabel = document.querySelector('label[for="full-name"]');
-          if(nameLabel) nameLabel.textContent = "Team Lead Name";
-          const emailLabel = document.querySelector('label[for="email"]');
-          if(emailLabel) emailLabel.textContent = "Team Lead Email";
-        } else {
-             if(teamNameField) teamNameField.style.display = 'none';
-             document.querySelectorAll('.team-member-field')?.forEach(el => {
-                (el as HTMLElement).style.display = 'none';
-             });
-        }
-        
-        step1?.classList.remove('active');
-        step2?.classList.add('active');
-        
-      } catch (err) {
-        console.error("Lookup Error: ", err);
-        if(lookupError) {
-          lookupError.textContent = "Invalid Code. Please check and try again.";
-          lookupError.style.display = "block";
-        }
-      } finally {
-        lookupBtn.textContent = originalText;
-        (lookupBtn as HTMLButtonElement).disabled = false;
-      }
-    });
-
-
     // Step 1: Selection
     typeBtns?.forEach(btn => {
       btn.addEventListener('click', () => {
         // @ts-ignore
         registrationType = btn.dataset.type;
         
-        // Reset disabled states if they were read-only from lookup
         const formElements = form?.elements;
         if(formElements) {
             for(let i=0; i<formElements.length; i++) {
@@ -359,33 +335,22 @@
           if(teamNameField) teamNameField.style.display = 'block';
           if(formTitle) formTitle.textContent = 'Team Registration';
           document.getElementById('team-name')?.setAttribute('required', 'true');
-          
-          // Show team member fields
           document.querySelectorAll('.team-member-field')?.forEach(el => {
             (el as HTMLElement).style.display = 'flex';
           });
-          
-          // Update labels for Team Lead
           const nameLabel = document.querySelector('label[for="full-name"]');
           if(nameLabel) nameLabel.textContent = "Team Lead Name";
-          
           const emailLabel = document.querySelector('label[for="email"]');
           if(emailLabel) emailLabel.textContent = "Team Lead Email (Main ID)";
-
         } else {
           if(teamNameField) teamNameField.style.display = 'none';
           if(formTitle) formTitle.textContent = 'Individual Registration';
           document.getElementById('team-name')?.removeAttribute('required');
-          
-          // Hide team member fields
           document.querySelectorAll('.team-member-field')?.forEach(el => {
             (el as HTMLElement).style.display = 'none';
           });
-
-          // Revert labels
           const nameLabel = document.querySelector('label[for="full-name"]');
           if(nameLabel) nameLabel.textContent = "Full Name";
-          
           const emailLabel = document.querySelector('label[for="email"]');
           if(emailLabel) emailLabel.textContent = "Email ID";
         }
@@ -395,171 +360,261 @@
       });
     });
 
-
-    // Step 2 Back Button (goes back to step 1)
     backBtn?.addEventListener('click', () => {
       step2?.classList.remove('active');
       step1?.classList.add('active');
     });
 
-
-    // Step 2: Form Submission Logic Integrated with Supabase
-    form?.addEventListener('submit', async (e) => {
+    // Step 2: Proceed to Payment
+    form?.addEventListener('submit', (e) => {
       e.preventDefault();
       
-      const submitBtn = form.querySelector('.submit-btn') as HTMLButtonElement;
-      if (submitBtn) {
-        submitBtn.innerText = 'Submitting...';
-        submitBtn.disabled = true;
+      // Store current form data
+      registrationData = {
+        fullName: (document.getElementById('full-name') as HTMLInputElement).value,
+        email: (document.getElementById('email') as HTMLInputElement).value,
+        phone: (document.getElementById('phone') as HTMLInputElement).value,
+        college: (document.getElementById('college') as HTMLInputElement).value,
+        department: (document.getElementById('dept') as HTMLInputElement).value,
+        year: (document.getElementById('year') as HTMLSelectElement).value,
+        track: (document.getElementById('track') as HTMLSelectElement).value,
+        projectName: (document.getElementById('project-name') as HTMLInputElement).value,
+        teamName: registrationType === 'team' ? (document.getElementById('team-name') as HTMLInputElement).value : '',
+        members: [
+          (document.getElementById('member-2') as HTMLInputElement).value,
+          (document.getElementById('member-3') as HTMLInputElement).value,
+          (document.getElementById('member-4') as HTMLInputElement).value
+        ]
+      };
+
+      // Set Amount and QR based on Type
+      const amount = registrationType === 'team' ? '999' : '299';
+      if (displayAmount) displayAmount.textContent = `₹${amount}`;
+      if (qrImage) qrImage.src = `/${amount}.jpeg`;
+      
+      // Also pre-fill step 4 team name
+      const confirmTeamName = document.getElementById('confirm-team-name') as HTMLInputElement;
+      if (confirmTeamName) confirmTeamName.value = registrationData.teamName || registrationData.fullName;
+
+      // Transition to Payment QR Step
+      startPaymentFlow();
+    });
+
+    function startPaymentFlow() {
+      step2?.classList.remove('active');
+      step3?.classList.add('active');
+      startTimer();
+    }
+
+    function startTimer() {
+      stopTimer();
+      timeLeft = 300;
+      updateTimerDisplay();
+      if(timerExpiredMsg) timerExpiredMsg.style.display = 'none';
+      if(ivePaidBtn) (ivePaidBtn as HTMLButtonElement).disabled = false;
+      
+      paymentTimer = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+          expireTimer();
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (paymentTimer) clearInterval(paymentTimer);
+      paymentTimer = null;
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      if (paymentTimerDisplay) {
+        paymentTimerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
       }
+    }
 
-      // Collect form data
-      const fullName = (document.getElementById('full-name') as HTMLInputElement)?.value;
-      const email = (document.getElementById('email') as HTMLInputElement)?.value;
-      const phone = (document.getElementById('phone') as HTMLInputElement)?.value;
-      const college = (document.getElementById('college') as HTMLInputElement)?.value;
-      const department = (document.getElementById('dept') as HTMLInputElement)?.value;
-      const year = (document.getElementById('year') as HTMLSelectElement)?.value;
-      const track = (document.getElementById('track') as HTMLSelectElement)?.value;
-      const projectName = (document.getElementById('project-name') as HTMLInputElement)?.value;
-      
-      const isTeam = registrationType === 'team';
-      const teamName = isTeam ? (document.getElementById('team-name') as HTMLInputElement)?.value : null;
-      
-      const member2 = (document.getElementById('member-2') as HTMLInputElement)?.value;
-      const member3 = (document.getElementById('member-3') as HTMLInputElement)?.value;
-      const member4 = (document.getElementById('member-4') as HTMLInputElement)?.value;
+    function expireTimer() {
+      stopTimer();
+      if (timerExpiredMsg) timerExpiredMsg.style.display = 'block';
+      if (ivePaidBtn) (ivePaidBtn as HTMLButtonElement).disabled = true;
+      if (completeRegBtn) completeRegBtn.disabled = true;
+    }
 
-      // Unique Code Generation Logic
-      let uniqueCode = '';
-      const randomStr = () => Math.random().toString(36).substring(2, 7).toUpperCase();
-      let isUnique = false;
+    // Step 3 Actions
+    retryPaymentBtn?.addEventListener('click', startTimer);
+    cancelPaymentBtn?.addEventListener('click', () => {
+      stopTimer();
+      step3?.classList.remove('active');
+      step2?.classList.add('active');
+    });
+
+    ivePaidBtn?.addEventListener('click', () => {
+      step3?.classList.remove('active');
+      step4?.classList.add('active');
+    });
+
+    // Step 4 Actions
+    backToQrBtn?.addEventListener('click', () => {
+      step4?.classList.remove('active');
+      step3?.classList.add('active');
+    });
+
+    // Form Validation for Step 4
+    const validatePaymentForm = () => {
+      const txId = (document.getElementById('transaction-id') as HTMLInputElement).value.trim();
+      const teamName = (document.getElementById('confirm-team-name') as HTMLInputElement).value.trim();
+      const phone = (document.getElementById('payer-phone') as HTMLInputElement).value.trim();
+      const isValid = txId !== '' && teamName !== '' && /^[0-9]{10}$/.test(phone) && timeLeft > 0;
+      if (completeRegBtn) completeRegBtn.disabled = !isValid;
+    };
+
+    paymentForm?.addEventListener('input', validatePaymentForm);
+
+    paymentForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (completeRegBtn) {
+        completeRegBtn.disabled = true;
+        completeRegBtn.textContent = 'Verifying...';
+      }
 
       try {
         const { supabase } = await import('../../lib/supabase');
         
-        // Loop to ensure uniqueness (with max 5 attempts to prevent infinite loops on DB failure)
+        let uniqueCode = '';
+        const randomStr = () => Math.random().toString(36).substring(2, 7).toUpperCase();
+        let isUnique = false;
         let attempts = 0;
+        
         while(!isUnique && attempts < 5) {
-          uniqueCode = isTeam ? `TEAM-2026-${randomStr()}` : `IND-2026-${randomStr()}`;
-          const { data, error } = await supabase
-            .from('registrations')
-            .select('id')
-            .eq('generated_code', uniqueCode);
-            
-          if (error) {
-            console.error('Supabase select error:', error);
-            throw new Error(error.message || 'Database error checking code uniqueness');
-          }
-            
-          if (data && data.length === 0) {
-            isUnique = true;
-          }
+          uniqueCode = registrationType === 'team' ? `TEAM-2026-${randomStr()}` : `IND-2026-${randomStr()}`;
+          const { data, error } = await supabase.from('registrations').select('id').eq('generated_code', uniqueCode);
+          if (error) throw error;
+          if (data && data.length === 0) isUnique = true;
           attempts++;
         }
-        
-        if (!isUnique) {
-             throw new Error("Failed to generate a unique code. Please try again.");
-        }
 
-        // Map frontend fields to DB schema
         const insertData = {
-          registration_type: isTeam ? 'team' : 'individual',
+          registration_type: registrationType,
           generated_code: uniqueCode,
-          college: college,
-          department: department,
-          year_of_study: parseInt(year),
-          track: track,
-          project_name: projectName,
-          
-          full_name: fullName,  // always required (team leader's name for teams)
-          email: email,  // always required (team leader's email for teams)
-          phone: phone,  // always required (team leader's phone for teams)
-          
-          team_name: isTeam ? teamName : null,
-          team_leader_name: isTeam ? fullName : null,
-          leader_email: isTeam ? email : null,
-          leader_phone: isTeam ? phone : null,
-          
-          member_2_name: isTeam ? member2 : null,
-          member_3_name: isTeam ? member3 : null,
-          member_4_name: isTeam ? member4 : null,
+          college: registrationData.college,
+          department: registrationData.department,
+          year_of_study: parseInt(registrationData.year),
+          track: registrationData.track,
+          project_name: registrationData.projectName,
+          full_name: registrationData.fullName,
+          email: registrationData.email,
+          phone: registrationData.phone,
+          team_name: registrationData.teamName || null,
+          team_leader_name: registrationData.fullName,
+          leader_email: registrationData.email,
+          leader_phone: registrationData.phone,
+          member_2_name: registrationData.members[0] || null,
+          member_3_name: registrationData.members[1] || null,
+          member_4_name: registrationData.members[2] || null,
+          transaction_id: (document.getElementById('transaction-id') as HTMLInputElement).value.trim(),
+          payer_phone: (document.getElementById('payer-phone') as HTMLInputElement).value.trim(),
+          payment_status: 'Paid',
+          amount: registrationType === 'team' ? 999 : 299
         };
 
-        const { error } = await supabase.from('registrations').insert([insertData]);
+        const { error: insertError } = await supabase.from('registrations').insert([insertData]);
+        if (insertError) throw insertError;
 
-        if (error) throw error;
-
-        // Trigger the Confirmation Email Edge Function
-        // Using "invoke" handles the JWT authorization automatically via the Supabase client
+        // Trigger Confirmation Email
         try {
           supabase.functions.invoke('send-confirmation-email', {
             body: {
-              name: isTeam ? teamName || fullName : fullName,
-              email: email,
+              name: registrationData.teamName || registrationData.fullName,
+              email: registrationData.email,
               unique_code: uniqueCode
             }
           });
-        } catch (emailErr) {
-          console.error("Failed to trigger email function:", emailErr);
-          // We intentionally don't throw here so the user still gets the success UI if only the email fails.
-        }
+        } catch (emailErr) {}
 
-        // Show Success Step
-        step2?.classList.remove('active');
-        step3?.classList.add('active');
+        // Success transition
+        stopTimer();
+        const finalCodeDisplay = document.getElementById('final-generated-code');
+        if (finalCodeDisplay) finalCodeDisplay.textContent = uniqueCode;
         
-        const codeDisplay = document.getElementById('generated-code-display');
-        if(codeDisplay) codeDisplay.textContent = uniqueCode;
+        step4?.classList.remove('active');
+        step5?.classList.add('active');
 
       } catch (err: any) {
-        console.error('Registration failed:', err);
-        // Show the actual error message dynamically now
         alert(`Registration failed: ${err.message || 'Unexpected error'}. Please try again.`);
-        
-        // Reset button
-        if (submitBtn) {
-          submitBtn.innerText = 'Submit Registration';
-          submitBtn.disabled = false;
+        if (completeRegBtn) {
+          completeRegBtn.disabled = false;
+          completeRegBtn.textContent = 'Complete Registration';
         }
       }
     });
 
-    // Copy Code Logic
-    const copyBtn = document.getElementById('copy-code-btn');
-    copyBtn?.addEventListener('click', () => {
-       const code = document.getElementById('generated-code-display')?.textContent;
-       if(code) {
-         navigator.clipboard.writeText(code).then(() => {
-           const ogText = copyBtn.innerHTML;
-           copyBtn.innerHTML = '✅ Copied!';
-           setTimeout(() => { copyBtn.innerHTML = ogText; }, 2000);
-         });
-       }
+    // Invoice Generation
+    downloadInvoiceBtn?.addEventListener('click', async () => {
+      const { jsPDF } = await import('jspdf');
+      const doc = new jsPDF();
+      const invoiceId = `INV-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+      const now = new Date();
+      
+      // Design Constants
+      const primaryColor = [37, 99, 235];
+      const grayColor = [100, 116, 139];
+      
+      // Header
+      doc.setFontSize(22);
+      doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      doc.text('Unai Tech', 105, 25, { align: 'center' });
+      
+      doc.setFontSize(10);
+      doc.setTextColor(grayColor[0], grayColor[1], grayColor[2]);
+      doc.text('Payment Received Successfully', 105, 32, { align: 'center' });
+
+      // Badge/Line
+      doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      doc.setLineWidth(0.5);
+      doc.line(20, 40, 190, 40);
+
+      // Invoice Details
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(11);
+      doc.text(`Invoice ID: ${invoiceId}`, 20, 55);
+      doc.text(`Date & Time: ${now.toLocaleString()}`, 20, 62);
+      doc.text(`Status: Paid`, 20, 69);
+
+      // Registration Details
+      doc.setFontSize(14);
+      doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      doc.text('Details', 20, 85);
+      
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(11);
+      doc.text(`Registration Type: ${registrationType.charAt(0).toUpperCase() + registrationType.slice(1)}`, 20, 95);
+      doc.text(`Team Name: ${registrationData.teamName || registrationData.fullName}`, 20, 102);
+      doc.text(`Amount Paid: ₹${registrationType === 'team' ? '999' : '299'}`, 20, 109);
+      doc.text(`Transaction ID: ${(document.getElementById('transaction-id') as HTMLInputElement).value}`, 20, 116);
+      doc.text(`Payer Phone: ${(document.getElementById('payer-phone') as HTMLInputElement).value}`, 20, 123);
+      doc.text(`Participant Code: ${document.getElementById('final-generated-code')?.textContent || 'N/A'}`, 20, 130);
+
+      // Footer
+      doc.setDrawColor(226, 232, 240);
+      doc.line(20, 260, 190, 260);
+      doc.setFontSize(9);
+      doc.setTextColor(grayColor[0], grayColor[1], grayColor[2]);
+      doc.text('This is a computer-generated invoice. No signature required.', 105, 270, { align: 'center' });
+      doc.text('Thank you for participating!', 105, 275, { align: 'center' });
+
+      doc.save(`${invoiceId}.pdf`);
     });
-
-    // Open modal if hash is #registration
-    function checkHash() {
-      if (window.location.hash === '#registration') {
-        const regBtn = document.querySelector('[data-registration-trigger]');
-        if (regBtn) {
-          (regBtn as HTMLElement).click();
-        } else if (modal) {
-          modal.dataset.open = "true";
-          modal.setAttribute('aria-hidden', 'false');
-        }
-      }
-    }
-
-    checkHash();
-    window.addEventListener('hashchange', checkHash);
 
     function resetForm() {
+      stopTimer();
       step1?.classList.add('active');
       step2?.classList.remove('active');
       step3?.classList.remove('active');
+      step4?.classList.remove('active');
+      step5?.classList.remove('active');
       
-      // Reset disabled states
       const formElements = form?.elements;
       if(formElements) {
           for(let i=0; i<formElements.length; i++) {
@@ -569,15 +624,17 @@
       const submitBtn = form?.querySelector('.submit-btn') as HTMLButtonElement;
       if (submitBtn) {
           submitBtn.style.display = 'block';
-          submitBtn.innerText = 'Submit Registration';
+          submitBtn.textContent = 'Proceed to Payment';
           submitBtn.disabled = false;
       }
       
-      if(lookupCodeInput) lookupCodeInput.value = '';
-      if(lookupError) lookupError.style.display = 'none';
-
       // @ts-ignore
       form?.reset();
+      paymentForm?.reset();
+      if(completeRegBtn) {
+        completeRegBtn.disabled = true;
+        completeRegBtn.textContent = 'Complete Registration';
+      }
     }
   });
 
@@ -632,7 +689,12 @@
     overflow-x: hidden;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
     pointer-events: auto;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .modal-content::-webkit-scrollbar {
@@ -667,6 +729,7 @@
   }
   
   .close-btn:hover { color: #0f172a; }
+  .close-btn:active { transform: scale(0.9); }
 
   .modal-tabs {
     display: flex;
@@ -692,6 +755,10 @@
     background: #f1f5f9;
   }
 
+  .tab-btn:active {
+    transform: scale(0.95);
+  }
+
   .tab-btn.active {
     color: var(--color-s-primary, #2563eb);
     background: #eff6ff;
@@ -707,7 +774,11 @@
     display: block;
   }
 
-  .step { display: none; animation: fadeIn 0.4s; }
+  .step { 
+    display: none; 
+    animation: fadeIn 0.4s; 
+    padding-bottom: 2rem; /* Ensure last elements are fully scrollable on mobile */
+  }
   .step.active { display: block; }
 
   @keyframes fadeIn {
@@ -734,6 +805,9 @@
   .type-btn:hover {
     border-color: var(--color-s-primary, #2563eb);
     background: #e0f2fe;
+  }
+  .type-btn:active {
+    transform: scale(0.98);
   }
   .icon { font-size: 3rem; display: block; margin-bottom: 1rem; }
 
@@ -775,6 +849,11 @@
     opacity: 0.7; cursor: not-allowed; background: #e2e8f0;
   }
 
+  button:active, .submit-btn:active, .back-btn:active, .cancel-btn:active, .whatsapp-btn:active, .invoice-btn:active, .retry-btn:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+
   .actions { margin-top: 2rem; display: flex; justify-content: space-between; }
   .submit-btn {
     background: var(--color-s-primary, #2563eb); color: white; border: none;
@@ -792,12 +871,190 @@
   .back-btn:hover { background: #f8fafc; border-color: var(--color-s-primary, #2563eb); }
 
   /* Success Step */
+  /* Payment Card Styles */
+  .payment-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .timer-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    background: #fee2e2;
+    color: #ef4444;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid #fecaca;
+  }
+
+  .payment-card h2 {
+    font-size: 1.5rem;
+    margin-top: 1rem;
+    color: #0f172a;
+  }
+
+  .qr-container {
+    background: white;
+    width: 200px;
+    height: 200px;
+    margin: 1.5rem auto;
+    padding: 0.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #f1f5f9;
+  }
+
+  .qr-container img {
+    max-width: 100%;
+    border-radius: 0.5rem;
+  }
+
+  .amount-display {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-s-primary, #2563eb);
+    margin: 1rem 0;
+  }
+
+  .payment-instructions {
+    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+
+  .reveal-animation {
+    animation: revealScale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes revealScale {
+    0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .error-msg {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #fff1f2;
+    border: 1px solid #fda4af;
+    border-radius: 0.75rem;
+    color: #be123c;
+  }
+
+  .retry-btn {
+    margin-top: 0.5rem;
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .cancel-btn {
+    background: white;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .cancel-btn:hover {
+    background: #f1f5f9;
+  }
+
+  /* Success Action Card */
+  .action-card {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    text-align: left;
+  }
+
+  .action-card h3 {
+    font-size: 1.1rem;
+    color: #0369a1;
+    margin-bottom: 0.5rem;
+  }
+
+  .action-card p {
+    font-size: 0.9rem;
+    color: #0c4a6e;
+    margin-bottom: 1rem;
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .whatsapp-btn {
+    background: #25d366;
+    color: white;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    text-align: center;
+    transition: transform 0.2s;
+  }
+
+  .whatsapp-btn:hover {
+    transform: translateY(-2px);
+    background: #22c55e;
+  }
+
+  .invoice-btn {
+    background: white;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .invoice-btn:hover {
+    background: #e0f2fe;
+  }
+
+  .done-btn {
+    background: #1e293b;
+    color: white;
+    border: none;
+    padding: 0.75rem 2.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
   .success-icon {
     font-size: 4rem; animation: bounce 1s;
   }
   .code-box {
-    margin: 1.5rem auto;
-    padding: 1.5rem;
+    margin: 1rem auto;
+    padding: 1.25rem;
     background: #f1f5f9;
     border: 2px dashed #94a3b8;
     border-radius: 0.75rem;
