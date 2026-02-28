@@ -35,46 +35,46 @@
           <div class="form-grid">
             <div class="field">
               <label for="full-name">Full Name</label>
-              <input type="text" id="full-name" required placeholder="John Doe">
+              <input type="text" id="full-name" required>
             </div>
             
             <div class="field" id="team-name-field" style="display:none;">
               <label for="team-name">Team Name</label>
-              <input type="text" id="team-name" placeholder="Code Warriors">
+              <input type="text" id="team-name">
             </div>
 
             <!-- Team Members Fields (Hidden for Individual) -->
             <div class="field team-member-field" style="display:none;">
                <label for="member-2">Team Member 2 Name</label>
-               <input type="text" id="member-2" placeholder="Member Name">
+               <input type="text" id="member-2">
             </div>
             <div class="field team-member-field" style="display:none;">
                <label for="member-3">Team Member 3 Name</label>
-               <input type="text" id="member-3" placeholder="Member Name">
+               <input type="text" id="member-3">
             </div>
             <div class="field team-member-field" style="display:none;">
                <label for="member-4">Team Member 4 Name</label>
-               <input type="text" id="member-4" placeholder="Member Name">
+               <input type="text" id="member-4">
             </div>
 
             <div class="field">
               <label for="email">Email ID</label>
-              <input type="email" id="email" required placeholder="john@example.com">
+              <input type="email" id="email" required>
             </div>
 
             <div class="field">
               <label for="phone">Phone Number</label>
-              <input type="tel" id="phone" required placeholder="+91 9876543210">
+              <input type="tel" id="phone" required>
             </div>
 
             <div class="field">
               <label for="college">College Name</label>
-              <input type="text" id="college" required placeholder="IIT Bombay">
+              <input type="text" id="college" required>
             </div>
 
             <div class="field">
               <label for="dept">Department</label>
-              <input type="text" id="dept" required placeholder="Computer Science">
+              <input type="text" id="dept" required>
             </div>
 
             <div class="field">
@@ -103,7 +103,7 @@
             
             <div class="field full-width">
               <label for="project-name">Project Name (Idea)</label>
-              <input type="text" id="project-name" required placeholder="Project X">
+              <input type="text" id="project-name" required>
             </div>
 
             <div class="field full-width checkbox-field">
@@ -159,17 +159,17 @@
           <div class="form-grid">
             <div class="field full-width">
               <label for="transaction-id">Transaction ID (Required)</label>
-              <input type="text" id="transaction-id" required placeholder="e.g. 123456789012">
+              <input type="text" id="transaction-id" required>
             </div>
             
             <div class="field full-width">
               <label for="confirm-team-name">Team Name (Required)</label>
-              <input type="text" id="confirm-team-name" required placeholder="Your Team Name">
+              <input type="text" id="confirm-team-name" required>
             </div>
 
             <div class="field full-width">
               <label for="payer-phone">Phone Number of Payer (Required)</label>
-              <input type="tel" id="payer-phone" required pattern="[0-9]{10}" placeholder="10 Digit Number">
+              <input type="tel" id="payer-phone" required pattern="[0-9]{10}">
             </div>
           </div>
           
@@ -214,7 +214,7 @@
         <h2>Find Your Registration</h2>
         <p>Enter your unique code (e.g., IND-2026-XXXXX or TEAM-2026-XXXXX) to view your details.</p>
         <div class="lookup-form">
-          <input type="text" id="lookup-code" placeholder="Enter Unique Code" class="lookup-input">
+          <input type="text" id="lookup-code" class="lookup-input">
           <button type="button" id="lookup-btn" class="submit-btn" style="width: auto;">Search</button>
         </div>
         <p id="lookup-error" style="color: #ef4444; margin-top: 1rem; display: none;">Invalid Code. Please check and try again.</p>
